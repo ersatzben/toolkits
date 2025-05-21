@@ -1,0 +1,929 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>UK R&D Policy Toolkit</title>
+   <style>
+    :root {
+      /* Brand colors */
+      --beige: #FDF9E9;
+      --bright-green: #81F494;
+      --dark-green: #0B4938;
+      --light-blue: #80B7F4;
+      --dark-blue: #093D77;
+      --charcoal: #283131;
+      --orange: #FE9F1C;
+      --light-red: #FAC2C2;
+      --deep-red: #B3063E;
+      
+      /* Theme colors */
+      --primary-color: var(--dark-blue);
+      --primary-dark: var(--dark-green);
+      --body-text: var(--charcoal);
+      
+      /* Section colors */
+      --tool-bg: var(--light-blue);
+      --tool-card: #b0d0f8;
+      --tool-card-hover: #c5ddff;
+      
+      --objective-bg: var(--beige);
+      --objective-card: #f6efd0;
+      --objective-card-hover: #f2e8b8;
+      
+      --scenario-bg: #dbf5e1;
+      --scenario-card: #c0ecca;
+      --scenario-card-hover: var(--bright-green);
+    }
+    
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background: var(--beige);
+      line-height: 1.6;
+      color: var(--charcoal);
+    }
+    
+    header {
+      background: var(--dark-blue);
+      color: white;
+      padding: 1.5rem;
+      text-align: center;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    }
+    
+    header h1 {
+      margin: 0 0 0.5rem 0;
+    }
+    
+    .container {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-around;
+      max-width: 1200px;
+      margin: 2rem auto;
+      gap: 2rem;
+      padding: 0 1rem;
+    }
+    
+    .section {
+      flex: 1;
+      padding: 1.5rem;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+      min-width: 250px;
+      transition: all 0.3s ease;
+    }
+    
+    .section:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+    }
+    
+    #tool-list {
+      background: var(--tool-bg);
+    }
+    
+    #objective-list {
+      background: var(--objective-bg);
+    }
+    
+    #scenario-list {
+      background: var(--scenario-bg);
+    }
+    
+    h2 {
+      font-size: 1.25rem;
+      border-bottom: 1px solid #ccc;
+      padding-bottom: 0.5rem;
+      margin-top: 0;
+    }
+    
+    .search-box {
+      width: 100%;
+      padding: 0.5rem;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      margin-bottom: 1rem;
+      font-size: 0.9rem;
+    }
+    
+    .cards-container {
+      max-height: 400px;
+      overflow-y: auto;
+      scrollbar-width: thin;
+    }
+    
+    .cards-container::-webkit-scrollbar {
+      width: 6px;
+    }
+    
+    .cards-container::-webkit-scrollbar-thumb {
+      background-color: rgba(0, 0, 0, 0.2);
+      border-radius: 3px;
+    }
+    
+    .card {
+      margin: 0.75rem 0;
+      padding: 0.75rem 1rem;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-weight: 500;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .card .card-arrow {
+      opacity: 0;
+      transition: opacity 0.2s;
+    }
+    
+    .card:hover .card-arrow {
+      opacity: 1;
+    }
+    
+    #tool-list .card {
+      background: var(--tool-card);
+    }
+    
+    #tool-list .card:hover {
+      background: var(--tool-card-hover);
+      transform: translateX(5px);
+    }
+    
+    #objective-list .card {
+      background: var(--objective-card);
+    }
+    
+    #objective-list .card:hover {
+      background: var(--objective-card-hover);
+      transform: translateX(5px);
+    }
+    
+    #scenario-list .card {
+      background: var(--scenario-card);
+    }
+    
+    #scenario-list .card:hover {
+      background: var(--scenario-card-hover);
+      transform: translateX(5px);
+    }
+    
+    .output {
+      max-width: 800px;
+      margin: 2rem auto;
+      border-radius: 12px;
+      padding: 2rem;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+      transition: all 0.3s ease;
+      animation: fadeIn 0.5s ease-out;
+    }
+    
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    
+    .output h3 {
+      margin-top: 0;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+      padding-bottom: 0.75rem;
+    }
+    
+    .output.tool {
+      background: var(--tool-bg);
+    }
+    
+    .output.objective {
+      background: var(--objective-bg);
+    }
+    
+    .output.scenario {
+      background: var(--scenario-bg);
+    }
+    
+    .tag {
+      background: var(--dark-green);
+      color: white;
+      padding: 0.25rem 0.6rem;
+      border-radius: 20px;
+      font-size: 0.85rem;
+      margin-right: 0.5rem;
+      display: inline-block;
+      margin-bottom: 0.5rem;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-weight: 500;
+    }
+    
+    .tag:hover {
+      background: var(--dark-blue);
+      transform: translateY(-2px);
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    }
+    
+    .label {
+      font-weight: bold;
+      margin-top: 1rem;
+      display: block;
+    }
+    
+    .output-section {
+      margin-bottom: 1.5rem;
+    }
+    
+    .output-field {
+      background: rgba(255, 255, 255, 0.5);
+      padding: 0.75rem;
+      border-radius: 6px;
+      margin-top: 0.25rem;
+    }
+    
+    .output-title {
+      font-size: 1.5rem;
+      margin-bottom: 1.5rem;
+    }
+    
+    .loading {
+      text-align: center;
+      padding: 1rem;
+      font-style: italic;
+      color: #666;
+    }
+    
+    .error-msg {
+      background: #fff0f0;
+      color: #d32f2f;
+      padding: 1rem;
+      border-radius: 6px;
+      margin: 1rem 0;
+      border-left: 4px solid #d32f2f;
+    }
+    
+    .related-items {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-top: 0.5rem;
+    }
+    
+    .back-to-top {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: var(--primary-color);
+      color: white;
+      border: none;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+      cursor: pointer;
+      opacity: 0;
+      transition: opacity 0.3s;
+      font-size: 1.2rem;
+    }
+    
+    .back-to-top.visible {
+      opacity: 1;
+    }
+    
+    @media (max-width: 768px) {
+      .container {
+        flex-direction: column;
+      }
+      
+      .section {
+        min-width: 0;
+      }
+      
+      .output {
+        margin: 2rem 1rem;
+        padding: 1.5rem;
+      }
+    }
+    
+    /* Accessibility improvements */
+    .visually-hidden {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      margin: -1px;
+      padding: 0;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      border: 0;
+    }
+    
+    .card:focus {
+      outline: 3px solid var(--dark-green);
+      outline-offset: 2px;
+    }
+    
+    .skip-link {
+      position: absolute;
+      top: -40px;
+      left: 0;
+      background: var(--dark-blue);
+      color: white;
+      padding: 8px;
+      z-index: 100;
+      transition: top 0.3s;
+    }
+    
+    .skip-link:focus {
+      top: 0;
+    }
+  </style>
+</head>
+<body>
+  <a href="#main-content" class="skip-link">Skip to main content</a>
+  
+  <header>
+    <h1>UK R&D Policy Toolkit</h1>
+    <p>Navigate by objectives, tools or scenarios to explore suitable interventions</p>
+  </header>
+
+  <div class="container" id="main-content">
+    <div class="section" id="tool-list">
+      <h2>Tools</h2>
+      <input 
+        type="text" 
+        class="search-box" 
+        id="toolSearch" 
+        placeholder="Search tools..." 
+        aria-label="Search tools"
+      >
+      <div class="cards-container" id="toolCards">
+        <div class="loading">Loading tools...</div>
+      </div>
+    </div>
+    <div class="section" id="objective-list">
+      <h2>Objectives</h2>
+      <input 
+        type="text" 
+        class="search-box" 
+        id="objectiveSearch" 
+        placeholder="Search objectives..." 
+        aria-label="Search objectives"
+      >
+      <div class="cards-container" id="objectiveCards">
+        <div class="loading">Loading objectives...</div>
+      </div>
+    </div>
+    <div class="section" id="scenario-list">
+      <h2>Scenarios</h2>
+      <input 
+        type="text" 
+        class="search-box" 
+        id="scenarioSearch" 
+        placeholder="Search scenarios..." 
+        aria-label="Search scenarios"
+      >
+      <div class="cards-container" id="scenarioCards">
+        <div class="loading">Loading scenarios...</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="output" id="output">
+    <h3 class="output-title">Explore R&D Policy Toolkit</h3>
+    <p>Select a tool, objective or scenario from the panels above to view detailed information. This toolkit helps identify appropriate R&D policy interventions based on various needs and contexts.</p>
+  </div>
+
+  <button id="backToTop" class="back-to-top" aria-label="Back to top">↑</button>
+
+  <script>
+  // Global data stores
+  let toolsData = [], objectivesData = [], scenariosData = [];
+  let isLoading = true;
+  
+  // Initialize the application
+  document.addEventListener('DOMContentLoaded', () => {
+    initSearchListeners();
+    fetchData();
+    initScrollToTopButton();
+  });
+
+  // Initialize search functionality
+  function initSearchListeners() {
+    document.getElementById('toolSearch').addEventListener('input', (e) => {
+      filterCards('tool', e.target.value);
+    });
+    
+    document.getElementById('objectiveSearch').addEventListener('input', (e) => {
+      filterCards('objective', e.target.value);
+    });
+    
+    document.getElementById('scenarioSearch').addEventListener('input', (e) => {
+      filterCards('scenario', e.target.value);
+    });
+  }
+  
+  // Initialize back to top button
+  function initScrollToTopButton() {
+    const backToTopButton = document.getElementById('backToTop');
+    
+    window.addEventListener('scroll', () => {
+      if (window.scrollY > 300) {
+        backToTopButton.classList.add('visible');
+      } else {
+        backToTopButton.classList.remove('visible');
+      }
+    });
+    
+    backToTopButton.addEventListener('click', () => {
+      window.scrollTo({
+        top: 0,
+        behavior: 'smooth'
+      });
+    });
+  }
+
+  // Filter cards based on search input
+  function filterCards(type, query) {
+    query = query.toLowerCase();
+    let data, container;
+    
+    switch(type) {
+      case 'tool':
+        data = toolsData;
+        container = document.getElementById('toolCards');
+        break;
+      case 'objective':
+        data = objectivesData;
+        container = document.getElementById('objectiveCards');
+        break;
+      case 'scenario':
+        data = scenariosData;
+        container = document.getElementById('scenarioCards');
+        break;
+    }
+    
+    // Clear container
+    container.innerHTML = '';
+    
+    // Filter and render data
+    const filteredData = query ? 
+      data.filter(item => {
+        const searchableText = type === 'tool' ? 
+          `${item.name} ${item.summary} ${item.tags}` : 
+          `${item.title} ${item.summary || item.description}`;
+        return searchableText.toLowerCase().includes(query);
+      }) : data;
+    
+    if (filteredData.length === 0) {
+      const noResults = document.createElement('div');
+      noResults.className = 'card';
+      noResults.textContent = 'No results found';
+      noResults.style.cursor = 'default';
+      container.appendChild(noResults);
+      return;
+    }
+    
+    // Render filtered data
+    switch(type) {
+      case 'tool':
+        renderTools(filteredData);
+        break;
+      case 'objective':
+        renderObjectives(filteredData);
+        break;
+      case 'scenario':
+        renderScenarios(filteredData);
+        break;
+    }
+  }
+
+  // Fetch data from API with error handling
+  async function fetchData() {
+    try {
+      isLoading = true;
+      
+      const [toolsRes, objectivesRes, scenariosRes] = await Promise.all([
+        fetch("https://sheetdb.io/api/v1/ogw0pu0z4tipl?sheet=tools"),
+        fetch("https://sheetdb.io/api/v1/ogw0pu0z4tipl?sheet=objectives"),
+        fetch("https://sheetdb.io/api/v1/ogw0pu0z4tipl?sheet=scenarios")
+      ]);
+      
+      // Check for response errors
+      if (!toolsRes.ok) throw new Error('Failed to fetch tools data');
+      if (!objectivesRes.ok) throw new Error('Failed to fetch objectives data');
+      if (!scenariosRes.ok) throw new Error('Failed to fetch scenarios data');
+      
+      // Parse response data
+      toolsData = await toolsRes.json();
+      objectivesData = await objectivesRes.json();
+      scenariosData = await scenariosRes.json();
+      
+      // Render all data
+      renderTools(toolsData);
+      renderObjectives(objectivesData);
+      renderScenarios(scenariosData);
+      
+    } catch (error) {
+      console.error('Error fetching data:', error);
+      document.getElementById('toolCards').innerHTML = '<div class="error-msg">Failed to load tools data. Please try refreshing the page.</div>';
+      document.getElementById('objectiveCards').innerHTML = '<div class="error-msg">Failed to load objectives data. Please try refreshing the page.</div>';
+      document.getElementById('scenarioCards').innerHTML = '<div class="error-msg">Failed to load scenarios data. Please try refreshing the page.</div>';
+    } finally {
+      isLoading = false;
+    }
+  }
+
+  // Render tool cards
+  function renderTools(tools) {
+    const container = document.getElementById("toolCards");
+    container.innerHTML = "";
+    
+    tools.forEach(tool => {
+      const card = document.createElement("div");
+      card.className = "card";
+      card.setAttribute('tabindex', '0');
+      card.setAttribute('role', 'button');
+      card.setAttribute('aria-label', `View details for tool: ${tool.name}`);
+      
+      const nameSpan = document.createElement("span");
+      nameSpan.textContent = tool.name;
+      
+      const arrowSpan = document.createElement("span");
+      arrowSpan.className = "card-arrow";
+      arrowSpan.textContent = "→";
+      
+      card.appendChild(nameSpan);
+      card.appendChild(arrowSpan);
+      
+      card.addEventListener('click', () => showToolDetails(tool.tool_id));
+      card.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          showToolDetails(tool.tool_id);
+        }
+      });
+      
+      container.appendChild(card);
+    });
+  }
+
+  // Render objective cards
+  function renderObjectives(objectives) {
+    const container = document.getElementById("objectiveCards");
+    container.innerHTML = "";
+    
+    objectives.forEach(obj => {
+      const card = document.createElement("div");
+      card.className = "card";
+      card.setAttribute('tabindex', '0');
+      card.setAttribute('role', 'button');
+      card.setAttribute('aria-label', `View details for objective: ${obj.title}`);
+      
+      const titleSpan = document.createElement("span");
+      titleSpan.textContent = obj.title;
+      
+      const arrowSpan = document.createElement("span");
+      arrowSpan.className = "card-arrow";
+      arrowSpan.textContent = "→";
+      
+      card.appendChild(titleSpan);
+      card.appendChild(arrowSpan);
+      
+      card.addEventListener('click', () => showObjectiveDetails(obj.objective_id));
+      card.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          showObjectiveDetails(obj.objective_id);
+        }
+      });
+      
+      container.appendChild(card);
+    });
+  }
+
+  // Render scenario cards
+  function renderScenarios(scenarios) {
+    const container = document.getElementById("scenarioCards");
+    container.innerHTML = "";
+    
+    scenarios.forEach(scenario => {
+      const card = document.createElement("div");
+      card.className = "card";
+      card.setAttribute('tabindex', '0');
+      card.setAttribute('role', 'button');
+      card.setAttribute('aria-label', `View details for scenario: ${scenario.title}`);
+      
+      const titleSpan = document.createElement("span");
+      titleSpan.textContent = scenario.title;
+      
+      const arrowSpan = document.createElement("span");
+      arrowSpan.className = "card-arrow";
+      arrowSpan.textContent = "→";
+      
+      card.appendChild(titleSpan);
+      card.appendChild(arrowSpan);
+      
+      card.addEventListener('click', () => showScenarioDetails(scenario.scenario_id));
+      card.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          showScenarioDetails(scenario.scenario_id);
+        }
+      });
+      
+      container.appendChild(card);
+    });
+  }
+
+  // Create output field component
+  function createOutputField(label, content) {
+    if (!content || content.trim() === '') return '';
+    
+    return `
+      <div class="output-section">
+        <span class="label">${label}</span>
+        <div class="output-field">${content}</div>
+      </div>
+    `;
+  }
+
+  // Format tags as clickable elements
+  function formatTags(tagsString) {
+    if (!tagsString || tagsString.trim() === '') return '';
+    
+    return tagsString.split(',')
+      .map(tag => `<span class="tag">${tag.trim()}</span>`)
+      .join(' ');
+  }
+
+  // Format links
+  function formatLinks(linksString) {
+    if (!linksString || linksString.trim() === '') return '';
+    
+    return linksString.split(',')
+      .map(link => {
+        const trimmedLink = link.trim();
+        return `<a href="${trimmedLink}" target="_blank" rel="noopener noreferrer">${trimmedLink}</a>`;
+      })
+      .join('<br>');
+  }
+
+  // Show tool details
+  function showToolDetails(toolId) {
+    const tool = toolsData.find(t => t.tool_id === toolId);
+    if (!tool) return;
+    
+    const output = document.getElementById("output");
+    output.className = "output tool";
+    output.innerHTML = `
+      <h3 class="output-title">${tool.name}</h3>
+      
+      ${createOutputField("Summary", tool.summary)}
+      ${createOutputField("TRL Range", tool.trl_range)}
+      ${createOutputField("Innovation Mechanism", tool.innovation_mechanism)}
+      ${createOutputField("Delivery Complexity", tool.delivery_complexity)}
+      ${createOutputField("Deployment Time", tool.deployment_time)}
+      ${createOutputField("Time to Impact", tool.time_to_impact)}
+
+      <div class="output-section">
+        <span class="label">Related Objectives</span>
+        <div class="related-items" id="relatedObjectives">
+          Loading related objectives...
+        </div>
+      </div>
+      ${createOutputField("Target Recipient(s)", tool.target)}
+      ${createOutputField("Used For", tool.used_for)}
+      
+      <div class="output-section">
+        <span class="label">Tags</span>
+        <div class="related-items">
+          ${formatTags(tool.tags)}
+        </div>
+      </div>
+      
+      ${createOutputField("Example Programmes", tool.examples)}
+      ${createOutputField("Evidence Level", tool.evidence_level)}
+      ${createOutputField("Evidence Summary", tool.evidence_summary)}
+      
+      <div class="output-section">
+        <span class="label">References</span>
+        <div class="output-field">
+          ${formatLinks(tool.references)}
+        </div>
+      </div>
+    `;
+    
+    // Scroll to output
+    output.scrollIntoView({ behavior: 'smooth' });
+    
+    // Find related objectives
+    findRelatedObjectives(toolId);
+  }
+
+  // Find and display objectives related to a tool
+  function findRelatedObjectives(toolId) {
+    const relatedContainer = document.getElementById('relatedObjectives');
+    
+    const relatedObjectives = objectivesData.filter(obj => {
+      return obj.tools.split(',')
+        .map(id => id.trim())
+        .includes(toolId);
+    });
+    
+    if (relatedObjectives.length === 0) {
+      relatedContainer.textContent = 'No related objectives found';
+      return;
+    }
+    
+    relatedContainer.innerHTML = '';
+    
+    relatedObjectives.forEach(obj => {
+      const tag = document.createElement('span');
+      tag.className = 'tag';
+      tag.textContent = obj.title;
+      tag.addEventListener('click', () => showObjectiveDetails(obj.objective_id));
+      relatedContainer.appendChild(tag);
+    });
+  }
+
+  // Show objective details
+  function showObjectiveDetails(objectiveId) {
+    const obj = objectivesData.find(o => o.objective_id === objectiveId);
+    if (!obj) return;
+    
+    const output = document.getElementById("output");
+    output.className = "output objective";
+    
+    // Find related tools
+    const relatedTools = obj.tools.split(',')
+      .map(id => id.trim())
+      .map(id => {
+        const tool = toolsData.find(t => t.tool_id === id);
+        if (tool) {
+          return `<span class="tag" 
+                    onclick="showToolDetails('${tool.tool_id}')" 
+                    tabindex="0" 
+                    role="button" 
+                    onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();showToolDetails('${tool.tool_id}')}"
+                  >${tool.name}</span>`;
+        }
+        return `<span class="tag">${id}</span>`;
+      })
+      .join(' ');
+    
+    output.innerHTML = `
+      <h3 class="output-title">${obj.title}</h3>
+      
+      ${createOutputField("Description", obj.description)}
+      ${createOutputField("Notes", obj.notes)}
+      
+      <div class="output-section">
+        <span class="label">Priority Tags</span>
+        <div class="related-items">
+          ${formatTags(obj.priority_tags)}
+        </div>
+      </div>
+      
+      <div class="output-section">
+        <span class="label">Related Tools</span>
+        <div class="related-items">
+          ${relatedTools || 'No related tools found'}
+        </div>
+      </div>
+      
+      <div class="output-section">
+        <span class="label">Related Scenarios</span>
+        <div class="related-items" id="relatedScenarios">
+          Loading related scenarios...
+        </div>
+      </div>
+    `;
+    
+    // Scroll to output
+    output.scrollIntoView({ behavior: 'smooth' });
+    
+    // Find related scenarios
+    findRelatedScenarios(objectiveId);
+  }
+
+  // Find and display scenarios related to an objective
+  function findRelatedScenarios(objectiveId) {
+    const relatedContainer = document.getElementById('relatedScenarios');
+    
+    const relatedScenarios = scenariosData.filter(scenario => {
+      return scenario.objective_ids.split(',')
+        .map(id => id.trim())
+        .includes(objectiveId);
+    });
+    
+    if (relatedScenarios.length === 0) {
+      relatedContainer.textContent = 'No related scenarios found';
+      return;
+    }
+    
+    relatedContainer.innerHTML = '';
+    
+    relatedScenarios.forEach(scenario => {
+      const tag = document.createElement('span');
+      tag.className = 'tag';
+      tag.textContent = scenario.title;
+      tag.addEventListener('click', () => showScenarioDetails(scenario.scenario_id));
+      relatedContainer.appendChild(tag);
+    });
+  }
+
+  // Show scenario details
+  function showScenarioDetails(scenarioId) {
+    const scenario = scenariosData.find(s => s.scenario_id === scenarioId);
+    if (!scenario) return;
+    
+    const output = document.getElementById("output");
+    output.className = "output scenario";
+
+    // Find related tools
+    const relatedTools = scenario.tool_ids.split(',')
+      .map(id => id.trim())
+      .map(id => {
+        const tool = toolsData.find(t => t.tool_id === id);
+        if (tool) {
+          return `<span class="tag" 
+                    onclick="showToolDetails('${tool.tool_id}')" 
+                    tabindex="0" 
+                    role="button" 
+                    onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();showToolDetails('${tool.tool_id}')}"
+                  >${tool.name}</span>`;
+        }
+        return `<span class="tag">${id}</span>`;
+      })
+      .join(' ');
+
+    // Find related objectives
+    const relatedObjectives = scenario.objective_ids.split(',')
+      .map(id => id.trim())
+      .map(id => {
+        const obj = objectivesData.find(o => o.objective_id === id);
+        if (obj) {
+          return `<span class="tag" 
+                    onclick="showObjectiveDetails('${obj.objective_id}')" 
+                    tabindex="0" 
+                    role="button" 
+                    onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();showObjectiveDetails('${obj.objective_id}')}"
+                  >${obj.title}</span>`;
+        }
+        return `<span class="tag">${id}</span>`;
+      })
+      .join(' ');
+
+    output.innerHTML = `
+      <h3 class="output-title">${scenario.title}</h3>
+      
+      ${createOutputField("Summary", scenario.summary)}
+      ${createOutputField("Context", scenario.context)}
+      ${createOutputField("Intervention Summary", scenario.intervention_summary)}
+      ${createOutputField("Notes on Design", scenario.notes_on_design)}
+      ${createOutputField("Reference Programmes", scenario.reference_programmes)}
+      
+      <div class="output-section">
+        <span class="label">Related Tools</span>
+        <div class="related-items">
+          ${relatedTools || 'No related tools found'}
+        </div>
+      </div>
+      
+      <div class="output-section">
+        <span class="label">Related Objectives</span>
+        <div class="related-items">
+          ${relatedObjectives || 'No related objectives found'}
+        </div>
+      </div>
+      
+      <div class="output-section">
+        <span class="label">Sources</span>
+        <div class="output-field">
+          ${formatLinks(scenario.sources)}
+        </div>
+      </div>
+    `;
+    
+    // Scroll to output
+    output.scrollIntoView({ behavior: 'smooth' });
+  }
+
+  // Make functions globally available for inline event handlers
+  window.showToolDetails = showToolDetails;
+  window.showObjectiveDetails = showObjectiveDetails;
+  window.showScenarioDetails = showScenarioDetails;
+  </script>
+</body>
+</html>
