@@ -85,9 +85,6 @@
       font-style: italic;
     }
 
-    .status-badge a {color:#f8f8f5; font-weight: 300; text-decoration: underline;}
-    .status-badge a:hover {color:#f8f8f5; font-weight:900;}
-
     .container {
       display: flex;
       flex-wrap: wrap;
@@ -439,7 +436,7 @@
   <header>
     <h1>UK R&D Policy Toolkit</h1>
     <p>Navigate by objectives, tools or scenarios to explore suitable interventions</p>
-    <p class="status-badge">Draft – under construction – <a href="layout2.html">see alternative layout</a></p>
+    <p class="status-badge">Draft – under construction</p>
   </header>
 
   <div class="container" id="main-content">
@@ -819,46 +816,28 @@
   // Find and display objectives related to a tool
   function findRelatedObjectives(toolId) {
     const relatedContainer = document.getElementById('relatedObjectives');
-    if (!relatedContainer) {
-        // console.error("Element with ID 'relatedObjectives' not found in the DOM.");
-        return;
-    }
-
+    
     const relatedObjectives = objectivesData.filter(obj => {
-      // Ensure obj.tools exists and is a string before trying to split it
-      if (typeof obj.tools === 'string' && obj.tools.length > 0) {
-        return obj.tools.split(',')
-          .map(id => id.trim())
-          .includes(toolId);
-      }
-      return false; // If obj.tools is not a string or is empty
+      return obj.tools.split(',')
+        .map(id => id.trim())
+        .includes(toolId);
     });
-
+    
     if (relatedObjectives.length === 0) {
-      relatedContainer.textContent = 'No related objectives found for this tool.';
+      relatedContainer.textContent = 'No related objectives found';
       return;
     }
-
-    relatedContainer.innerHTML = ''; // Clear previous content
-
-    // DOM creation and event listener attachment 
+    
+    relatedContainer.innerHTML = '';
+    
     relatedObjectives.forEach(obj => {
       const tag = document.createElement('span');
       tag.className = 'tag';
       tag.textContent = obj.title;
-      tag.setAttribute('role', 'button');
-      tag.setAttribute('tabindex', '0');
-      // Ensure showObjectiveDetails is correctly defined and accessible
       tag.addEventListener('click', () => showObjectiveDetails(obj.objective_id));
-      tag.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter' || e.key === ' ') {
-          e.preventDefault();
-          showObjectiveDetails(obj.objective_id);
-        }
-      });
       relatedContainer.appendChild(tag);
     });
-}
+  }
 
   // Show objective details
   function showObjectiveDetails(objectiveId) {

@@ -1,0 +1,743 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Centre for British Progress: UK R&D Policy Toolkit</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-main: #FDF9E9;
+      --bg-field: #FDF9E9;
+      --dark-blue: #093D77;
+      --light-blue: #80B7F4;
+      --orange: #FE9F1C;
+      --dark-green: #0B4938;
+      --text-primary: #283131;
+      --border-subtle: rgba(0,0,0,0.1);
+      --shadow-soft: 0 2px 8px rgba(0,0,0,0.05);
+      --shadow-medium: 0 4px 12px rgba(0,0,0,0.07);
+      --sidebar-width: 320px;
+      --sidebar-bg: #ffffff;
+    }
+    body {
+      font-family:'Inter',sans-serif;
+      margin:0; padding:0;
+      background:var(--bg-main);
+      color:var(--text-primary);
+      line-height:1.5;
+    }
+    header {
+        background: linear-gradient(135deg,
+            var(--dark-green) 0%,
+            var(--dark-blue) 100%
+        );
+      color:white; text-align:center;
+      padding:1rem 2rem; box-shadow:var(--shadow-medium);
+    }
+    header h1 {margin:0 0 .3rem;font-weight:100;font-size:1.6rem;}
+    header p {margin:0;font-size:.95rem;opacity:.9;padding-bottom:.5em;}
+    .status-badge {
+      background:rgba(255,255,255,.15);color:white;
+      padding:.2em .5em;border-radius:4px;font-style:italic;
+      font-size:.85rem;display:inline-block;
+    }
+    .page-layout {
+      display:flex;
+      max-width:1400px;
+      margin:1.5rem auto;
+      gap:1.5rem;
+      padding:0 1rem;
+    }
+    #sidebar {
+      width:var(--sidebar-width);
+      flex-shrink:0;
+      background:var(--sidebar-bg);
+      padding:1rem;
+      border:1px solid var(--border-subtle);
+      border-radius:8px;
+      box-shadow:var(--shadow-soft);
+      position:sticky; top:1.5rem;
+      max-height:calc(100vh - 3rem);
+      overflow-y:auto;
+    }
+    .sidebar-section { margin-bottom:1rem; }
+    .collapsible-header {
+      width:100%; border:none; background:white;
+      padding:.8rem 1rem; border-radius:8px;
+      display:flex; justify-content:space-between; align-items:center;
+      cursor:pointer; font-family:inherit;
+      box-shadow:0 2px 4px rgba(0,0,0,0.05);
+      transition:box-shadow .2s;
+    }
+    .collapsible-header:hover { box-shadow:0 3px 6px rgba(0,0,0,0.08); }
+    .collapsible-header h2 {
+      margin:0; font-size:1.1rem;font-weight:600;
+      color:var(--text-primary);
+    }
+    .toggle-icon {
+        transition:transform .3s;
+        margin-left: 0.5em;
+    }
+    .collapsible-header[aria-expanded="false"] .toggle-icon {
+      transform:rotate(180deg);
+    }
+    .collapsible-content {
+      max-height:0; overflow:hidden;
+      transition:max-height .3s ease,opacity .2s ease,padding .2s ease;
+      padding:0 .25rem; opacity:0;
+    }
+    .collapsible-header[aria-expanded="true"] + .collapsible-content {
+      max-height:70vh; /* adjust as needed */
+      padding:.5rem .25rem .75rem;
+      opacity:1;
+    }
+    .search-container { position:relative; margin-bottom:.9rem; }
+    .search-box {
+      width:100%; padding:.6rem .8rem; padding-right:32px;
+      border:1px solid var(--border-subtle); border-radius:6px;
+      background:#fff url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="rgba(0,0,0,0.3)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>') no-repeat calc(100% - 8px) center /16px;
+      box-shadow:0 1px 3px rgba(0,0,0,0.05);
+      font-size:.9rem;
+    }
+    .search-box:focus {
+      outline:none;
+      border-color:var(--dark-blue);
+      box-shadow:0 0 0 3px rgba(9,61,119,.1);
+    }
+    .search-clear {
+      position:absolute; right:8px; top:50%;
+      transform:translateY(-50%);
+      border:none; background:none;
+      font-size:1rem;color:rgba(0,0,0,.4);
+      cursor:pointer; display:none;
+    }
+    .search-box:not(:placeholder-shown)+.search-clear { display:block; }
+    /* cards-wrapper now non-scrolling */
+    .cards-container {
+      position:relative;
+      overflow:hidden;
+    }
+    /* inner scroller */
+    .cards-container .scroll-content {
+      max-height:40vh;
+      overflow-y:auto;
+      padding-right:4px; margin-left:3px;
+    }
+    /* fading overlays on wrapper */
+    .cards-container::before,
+    .cards-container::after {
+      content:''; position:absolute;
+      left:0; right:4px; height:35px;
+      pointer-events:none; z-index:1;
+      transition:opacity .2s;
+    }
+    .cards-container::before {
+      top:0;
+      background:linear-gradient(to bottom,#fff 0%,rgba(255,255,255,0)100%);
+      opacity:0;
+    }
+    .cards-container::after {
+      bottom:0;
+      background:linear-gradient(to top,#fff 0%,rgba(255,255,255,0)100%);
+      opacity:0;
+    }
+    /* show fades when not at extremes */
+    .cards-container.not-at-top::before   { opacity:1; }
+    .cards-container.not-at-bottom::after{ opacity:1; }
+    /* card styles */
+    .card {
+      display:flex; justify-content:space-between; align-items:center;
+      padding:.4rem .9rem; margin:.5rem 0; border-radius:8px;
+      cursor:pointer; font-weight:500;
+      box-shadow:0 1px 2px rgba(0,0,0,0.05);
+      background:white; border-left:3px solid transparent;
+      position:relative;
+    }
+    .card .card-arrow {
+      opacity:0; transform:translateX(-5px);
+      transition:all .2s;
+    }
+    .card:hover .card-arrow,
+    .card.active .card-arrow {
+      opacity:1; transform:translateX(0);
+    }
+    /* different-color accents */
+    #toolCards .card {
+      border-left-color:var(--light-blue); color:var(--light-blue);
+    }
+    #toolCards .card:hover,
+    #toolCards .card.active {
+      color:var(--dark-blue);
+      border-left-color:var(--dark-blue);
+      background:rgba(128,183,244,0.1);
+      transform:translateX(3px);
+    }
+    #objectiveCards .card {
+      border-left-color:var(--orange); color:var(--orange);
+    }
+    #objectiveCards .card:hover,
+    #objectiveCards .card.active {
+      color:#D27C00;
+      border-left-color:#D27C00;
+      background:rgba(254,159,28,0.1);
+      transform:translateX(3px);
+    }
+    #scenarioCards .card {
+      border-left-color:var(--dark-green); color:var(--dark-green);
+    }
+    #scenarioCards .card:hover,
+    #scenarioCards .card.active {
+      color:#073929;
+      border-left-color:#073929;
+      background:rgba(11,73,56,0.1);
+      transform:translateX(3px);
+    }
+    .card:focus-visible {
+      outline:none;
+      box-shadow:0 0 0 2px var(--dark-blue),0 2px 4px rgba(0,0,0,0.1);
+    }
+    .output {
+      max-width:800px; margin:0 auto 1.5rem;
+      padding:1.25rem; background:white;
+      border:1px solid var(--border-subtle);
+      border-radius:8px; box-shadow:var(--shadow-medium);
+      animation:fadeIn .4s ease-out;
+    }
+    @keyframes fadeIn {
+      from {opacity:0;transform:translateY(10px)}
+      to   {opacity:1;transform:translateY(0)}
+    }
+    .output-title {
+      margin:0 0 1rem; font-size:1.4rem; font-weight:600;
+      border-bottom:1px solid var(--border-subtle); padding-bottom:.5rem;
+    }
+    .output.tool    {border-top:4px solid var(--light-blue)}
+    .output.objective{border-top:4px solid var(--orange)}
+    .output.scenario{border-top:4px solid var(--dark-green)}
+    .label {font-weight:600;color:var(--dark-blue);margin-bottom:.2rem;display:block;}
+    .output-section{margin-bottom:1rem;}
+    .output-field {
+      background:var(--bg-field);
+      padding:.5rem .75rem;
+      border:1px solid var(--border-subtle);
+      border-radius:4px;
+      font-family: 'Merriweather', serif;
+    }
+    .tag {
+      background:var(--dark-green);color:white;
+      padding:.15rem .5rem;border-radius:4px;
+      font-size:.75rem;margin:.2rem .4rem .4rem 0;
+      cursor:pointer;transition:all .2s;
+      display:inline-block;font-weight:500;
+    }
+    .tag:hover {
+      background:var(--dark-blue);
+      transform:translateY(-1px);
+      box-shadow:0 2px 3px rgba(0,0,0,0.1);
+    }
+    .count-badge {
+      background:rgba(0,0,0,0.1);
+      border-radius:12px;
+      padding:.1rem .6rem;
+      font-size:.75rem;
+      margin-left:.5rem;
+    }
+    .back-to-top {
+      position:fixed;bottom:20px;right:20px;
+      background:var(--dark-blue);color:white;
+      width:36px;height:36px;border:none;
+      border-radius:50%;cursor:pointer;
+      box-shadow:0 2px 5px rgba(0,0,0,0.2);
+      opacity:0;transition:opacity .3s;
+      font-size:1rem;z-index:99;
+    }
+    .back-to-top.visible {opacity:1}
+    .status-notification {
+      position:fixed;bottom:20px;left:50%;
+      transform:translateX(-50%) translateY(100px);
+      background:var(--dark-blue);color:white;
+      padding:.5rem 1rem;border-radius:4px;
+      box-shadow:0 3px 8px rgba(0,0,0,0.2);
+      opacity:0;transition:transform .3s,opacity .3s;
+      z-index:1000;
+    }
+    .status-notification.visible {
+      transform:translateX(-50%) translateY(0);
+      opacity:1;
+    }
+    @media(max-width:900px){
+      .page-layout{flex-direction:column;padding:0 .75rem}
+      #sidebar{width:100%;position:static;max-height:none;overflow:visible;margin-bottom:1.5rem}
+      .collapsible-content .scroll-content{max-height:200px}
+      .collapsible-header[aria-expanded="true"]+.collapsible-content{max-height:300px}
+    }
+    @media(max-width:768px){
+      body{font-size:14px}
+      header{padding:.75rem 1rem}
+      header h1{font-size:1.4rem}
+      header p{font-size:.9rem}
+      .output{padding:1rem}
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Centre for British Progress: UK R&D Policy Toolkit</h1>
+    <p class="status-badge">Draft – under construction</p>
+  </header>
+  <div class="page-layout">
+    <aside id="sidebar">
+      <!-- Tools -->
+      <div class="sidebar-section">
+        <button class="collapsible-header" aria-expanded="true" aria-controls="tools-content">
+          <h2>Tools</h2>
+          <div style="display:flex;align-items:center;">
+            <span class="count-badge" id="toolCount">0</span>
+            <span class="toggle-icon">▼</span>
+          </div>
+        </button>
+        <div class="collapsible-content" id="tools-content">
+          <div class="search-container">
+            <input type="text" id="toolSearch" class="search-box" placeholder="Search tools…" aria-label="Search tools"/>
+            <button class="search-clear" aria-label="Clear search">×</button>
+          </div>
+          <div class="cards-container" id="toolCards">
+            <div class="scroll-content">
+              <div class="loading">Loading tools…</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- Objectives -->
+      <div class="sidebar-section">
+        <button class="collapsible-header" aria-expanded="true" aria-controls="objectives-content">
+          <h2>Objectives</h2>
+          <div style="display:flex;align-items:center;">
+            <span class="count-badge" id="objectiveCount">0</span>
+            <span class="toggle-icon">▼</span>
+          </div>
+        </button>
+        <div class="collapsible-content" id="objectives-content">
+          <div class="search-container">
+            <input type="text" id="objectiveSearch" class="search-box" placeholder="Search objectives…" aria-label="Search objectives"/>
+            <button class="search-clear" aria-label="Clear search">×</button>
+          </div>
+          <div class="cards-container" id="objectiveCards">
+            <div class="scroll-content">
+              <div class="loading">Loading objectives…</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- Scenarios -->
+      <div class="sidebar-section">
+        <button class="collapsible-header" aria-expanded="true" aria-controls="scenarios-content">
+          <h2>Scenarios</h2>
+          <div style="display:flex;align-items:center;">
+            <span class="count-badge" id="scenarioCount">0</span>
+            <span class="toggle-icon">▼</span>
+          </div>
+        </button>
+        <div class="collapsible-content" id="scenarios-content">
+          <div class="search-container">
+            <input type="text" id="scenarioSearch" class="search-box" placeholder="Search scenarios…" aria-label="Search scenarios"/>
+            <button class="search-clear" aria-label="Clear search">×</button>
+          </div>
+          <div class="cards-container" id="scenarioCards">
+            <div class="scroll-content">
+              <div class="loading">Loading scenarios…</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </aside>
+    <main id="main-content-area">
+      <div class="output" id="output">
+        <h3 class="output-title">Explore R&D Policy Toolkit</h3>
+        <p>Select a tool, objective or scenario from the sidebar…</p>
+      </div>
+    </main>
+  </div>
+  <button id="backToTop" class="back-to-top" aria-label="Back to top">↑</button>
+  <div id="statusNotification" class="status-notification"></div>
+
+  <script>
+  let toolsData=[], objectivesData=[], scenariosData=[], isLoading=true;
+
+  document.addEventListener('DOMContentLoaded',()=>{
+    initSearchListeners();
+    initSearchClearButtons();
+    initCollapsibleSections();
+    initScrollToTopButton();
+    window.addEventListener('hashchange',handleHash);
+    fetchData();
+  });
+
+  function initSearchListeners(){
+    document.getElementById('toolSearch').addEventListener('input',debounce(e=>filterCards('tool',e.target.value),300));
+    document.getElementById('objectiveSearch').addEventListener('input',debounce(e=>filterCards('objective',e.target.value),300));
+    document.getElementById('scenarioSearch').addEventListener('input',debounce(e=>filterCards('scenario',e.target.value),300));
+  }
+  function initSearchClearButtons(){
+    document.querySelectorAll('.search-clear').forEach(btn=>{
+      btn.addEventListener('click',()=>{
+        let inp=btn.previousElementSibling;
+        inp.value=''; inp.focus();
+        inp.dispatchEvent(new Event('input'));
+      });
+    });
+  }
+  function initCollapsibleSections(){
+    document.querySelectorAll('.collapsible-header').forEach(header=>{
+      let exp=header.getAttribute('aria-expanded')==='true';
+      setCollapsibleState(header,exp);
+      header.addEventListener('click',()=>{
+        let cur=header.getAttribute('aria-expanded')==='true';
+        setCollapsibleState(header,!cur);
+      });
+    });
+  }
+  function setCollapsibleState(header,expand){
+    let content=document.getElementById(header.getAttribute('aria-controls'));
+    header.setAttribute('aria-expanded',String(expand));
+    let icon=header.querySelector('.toggle-icon');
+    if(icon) icon.textContent=expand?'▼':'▲';
+  }
+  function initScrollToTopButton(){
+    let btn=document.getElementById('backToTop');
+    window.addEventListener('scroll',()=>btn.classList.toggle('visible',window.scrollY>300));
+    btn.addEventListener('click',()=>window.scrollTo({top:0,behavior:'smooth'}));
+  }
+  function showNotification(msg,timeout=2000){
+    let n=document.getElementById('statusNotification');
+    n.textContent=msg; n.classList.add('visible');
+    setTimeout(()=>n.classList.remove('visible'),timeout);
+  }
+
+  function debounce(fn,wait){
+    let t;
+    return(...a)=>{clearTimeout(t);t=setTimeout(()=>fn(...a),wait);};
+  }
+
+  function fetchWithCache(url,key,expMin=60){
+    let raw=localStorage.getItem(key);
+    if(raw){
+      let {timestamp,data}=JSON.parse(raw);
+      if(Date.now()-timestamp<expMin*60*1000)
+        return Promise.resolve(data);
+    }
+    return fetch(url).then(r=>{if(!r.ok)throw new Error(r.status);return r.json()})
+      .then(d=>{localStorage.setItem(key,JSON.stringify({timestamp:Date.now(),data:d}));return d;});
+  }
+
+  async function fetchData(){
+    showSkeletonLoaders('toolCards',6);
+    showSkeletonLoaders('objectiveCards',6);
+    showSkeletonLoaders('scenarioCards',6);
+    try{
+      toolsData=await fetchWithCache("https://sheetdb.io/api/v1/ogw0pu0z4tipl?sheet=tools","toolsCache");
+      objectivesData=await fetchWithCache("https://sheetdb.io/api/v1/ogw0pu0z4tipl?sheet=objectives","objectivesCache");
+      scenariosData=await fetchWithCache("https://sheetdb.io/api/v1/ogw0pu0z4tipl?sheet=scenarios","scenariosCache");
+      renderTools(toolsData);
+      renderObjectives(objectivesData);
+      renderScenarios(scenariosData);
+      updateCounts();
+      isLoading=false;
+      handleHash();
+      document.querySelectorAll('.cards-container').forEach(wrapper=>{
+        let scroller=wrapper.querySelector('.scroll-content');
+        scroller.addEventListener('scroll',()=>updateScrollIndicators(wrapper));
+        updateScrollIndicators(wrapper);
+      });
+    }catch(err){
+      console.error(err);
+      ['toolCards','objectiveCards','scenarioCards'].forEach(id=>{
+        document.getElementById(id).innerHTML=`<div class="error-msg">Failed to load ${id}. ${err.message}</div>`;
+      });
+      isLoading=false;
+      handleHash();
+    }
+  }
+
+  function showSkeletonLoaders(id,count){
+    let c=document.getElementById(id);
+    c.innerHTML='';
+    let sc=document.createElement('div'); sc.className='scroll-content';
+    for(let i=0;i<count;i++){
+      let s=document.createElement('div');s.className='skeleton-loader';
+      sc.appendChild(s);
+    }
+    c.appendChild(sc);
+  }
+  function updateCounts(){
+    document.getElementById('toolCount').textContent=toolsData.length;
+    document.getElementById('objectiveCount').textContent=objectivesData.length;
+    document.getElementById('scenarioCount').textContent=scenariosData.length;
+  }
+
+  function filterCards(type,query){
+    let data,containerId;
+    query=query.toLowerCase();
+    if(type==='tool'){data=toolsData;containerId='toolCards';}
+    else if(type==='objective'){data=objectivesData;containerId='objectiveCards';}
+    else if(type==='scenario'){data=scenariosData;containerId='scenarioCards';}
+    else return;
+    let wrap=document.getElementById(containerId);
+    wrap.innerHTML='';
+    let sc=document.createElement('div');sc.className='scroll-content';
+    let filtered=query?data.filter(item=>{
+      let name=item.name||item.title||'';
+      let summary=item.summary||item.description||'';
+      let tags=item.tags||item.priority_tags||'';
+      return(`${name} ${summary} ${tags}`).toLowerCase().includes(query);
+    }):data;
+    if(filtered.length===0){
+      let no=document.createElement('div');no.className='card';
+      no.textContent='No results found'; no.style.cursor='default';
+      sc.appendChild(no);
+    } else {
+      filtered.forEach(item=>{
+        let card=document.createElement('div');card.className='card';
+        card.dataset.id=item.tool_id||item.objective_id||item.scenario_id;
+        let title=item.name||item.title;
+        card.innerHTML=`<span>${title}</span><span class="card-arrow">→</span>`;
+        card.addEventListener('click',()=>{
+          if(type==='tool') showToolDetails(card.dataset.id);
+          if(type==='objective') showObjectiveDetails(card.dataset.id);
+          if(type==='scenario') showScenarioDetails(card.dataset.id);
+        });
+        card.addEventListener('keydown',e=>{
+          if(e.key==='Enter'||e.key===' '){e.preventDefault();
+            if(type==='tool') showToolDetails(card.dataset.id);
+            if(type==='objective') showObjectiveDetails(card.dataset.id);
+            if(type==='scenario') showScenarioDetails(card.dataset.id);
+          }
+        });
+        sc.appendChild(card);
+      });
+    }
+    wrap.appendChild(sc);
+  }
+
+  function renderTools(arr){
+    document.getElementById('toolCards').innerHTML='';
+    arr.forEach(t=>filterCards('tool','')); // simply reuse filterCards to render all
+  }
+  function renderObjectives(arr){
+    document.getElementById('objectiveCards').innerHTML='';
+    arr.forEach(o=>filterCards('objective',''));
+  }
+  function renderScenarios(arr){
+    document.getElementById('scenarioCards').innerHTML='';
+    arr.forEach(s=>filterCards('scenario',''));
+  }
+
+  function formatTags(str){
+    if(!str) return'';
+    return str.split(',').map(t=>`<span class="tag">${t.trim()}</span>`).join(' ');
+  }
+  function formatLinks(str){
+    if(!str) return'';
+    return str.split(',').map(l=>{
+      l=l.trim();
+      let m=l.match(/^(https?:\/\/.*)/);
+      return m?`<a href="${l}" target="_blank" rel="noopener">${l}</a>`:l;
+    }).join('<br>');
+  }
+
+  function updateScrollIndicators(wrapper){
+    let sc=wrapper.querySelector('.scroll-content');
+    let atTop=sc.scrollTop<=2, atBottom=(sc.scrollTop+sc.clientHeight)>=sc.scrollHeight-2;
+    wrapper.classList.toggle('not-at-top',!atTop);
+    wrapper.classList.toggle('not-at-bottom',!atBottom);
+  }
+
+  function updateSidebarState(type,id){
+    if(!type) return;
+    let header,cardsId;
+    if(type==='tool'){
+      header=document.querySelector('[aria-controls="tools-content"]');
+      cardsId='toolCards';
+    }
+    if(type==='objective'){
+      header=document.querySelector('[aria-controls="objectives-content"]');
+      cardsId='objectiveCards';
+    }
+    if(type==='scenario'){
+      header=document.querySelector('[aria-controls="scenarios-content"]');
+      cardsId='scenarioCards';
+    }
+    if(header) setCollapsibleState(header,true);
+    document.querySelectorAll('.card.active').forEach(c=>c.classList.remove('active'));
+    if(cardsId){
+      let c=document.querySelector(`#${cardsId} .card[data-id="${id}"]`);
+      if(c){ c.classList.add('active'); 
+      // c.scrollIntoView({behavior:'smooth',block:'nearest'}); 
+      }
+    }
+  }
+
+  function updateURLHash(type,id){
+    let h=type&&id?`#${type}/${id}`:'';
+    if(window.location.hash!==h){
+      if(h) window.location.hash=h;
+      else history.pushState('','',location.pathname+location.search);
+    }
+  }
+
+  function showToolDetails(id,fromHash=false){
+    let t=toolsData.find(x=>x.tool_id===id);
+    let out=document.getElementById('output');
+    if(!t){ if(fromHash) out.innerHTML='<div class="error-msg">Tool not found.</div>'; return;}
+    out.className='output tool';
+    out.innerHTML=`
+      <h3 class="output-title">${t.name}</h3>
+      ${createOutputField('Summary',t.summary)}
+      ${createOutputField('TRL Range',t.trl_range)}
+      ${createOutputField('Innovation Mechanism',t.innovation_mechanism)}
+      ${createOutputField('Delivery Complexity',t.delivery_complexity)}
+      ${createOutputField('Deployment Time',t.deployment_time)}
+      ${createOutputField('Time to Impact',t.time_to_impact)}
+      <div class="output-section"><span class="label">Related Objectives</span><div class="related-items" id="relatedObjectives">Loading…</div></div>
+      ${createOutputField('Target Recipient(s)',t.target)}
+      ${createOutputField('Used For',t.used_for)}
+      <div class="output-section"><span class="label">Tags</span><div class="related-items">${formatTags(t.tags)}</div></div>
+      ${createOutputField('Example Programmes',t.examples)}
+      ${createOutputField('Evidence Level',t.evidence_level)}
+      ${createOutputField('Evidence Summary',t.evidence_summary)}
+      <div class="output-section"><span class="label">References</span><div class="output-field">${formatLinks(t.references)}</div></div>
+    `;
+    updateSidebarState('tool',id);
+    if(!fromHash) updateURLHash('tool',id);
+    // out.scrollIntoView({behavior:'smooth',block:'start'});
+    findRelatedObjectives(id);
+    showNotification(`Viewing tool: ${t.name}`);
+  }
+  function findRelatedObjectives(toolId){
+    let cont=document.getElementById('relatedObjectives');
+    cont.innerHTML='';
+    let rel=objectivesData.filter(o=>
+      (o.tools||'').split(',').map(x=>x.trim()).includes(toolId)
+    );
+    if(rel.length===0){cont.textContent='No related objectives.';return;}
+    rel.forEach(o=>{
+      let tag=document.createElement('span');
+      tag.className='tag'; tag.textContent=o.title;
+      tag.setAttribute('role','button'); tag.setAttribute('tabindex','0');
+      tag.addEventListener('click',()=>showObjectiveDetails(o.objective_id));
+      tag.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();showObjectiveDetails(o.objective_id);} });
+      cont.appendChild(tag);
+    });
+  }
+
+  function showObjectiveDetails(id,fromHash=false){
+    let o=objectivesData.find(x=>x.objective_id===id);
+    let out=document.getElementById('output');
+    if(!o){if(fromHash) out.innerHTML='<div class="error-msg">Objective not found.</div>';return;}
+    out.className='output objective';
+    let relatedToolIds=(o.tools||'').split(',').map(x=>x.trim()).filter(x=>x);
+    let relToolsHTML=relatedToolIds.map(tid=>{
+      let t=toolsData.find(x=>x.tool_id===tid);
+      return t?`<span class="tag" role="button" tabindex="0" data-tool-id="${tid}">${t.name}</span>`:
+              `<span class="tag disabled">${tid}</span>`;
+    }).join(' ');
+    out.innerHTML=`
+      <h3 class="output-title">${o.title}</h3>
+      ${createOutputField('Description',o.description)}
+      ${createOutputField('Notes',o.notes)}
+      <div class="output-section"><span class="label">Priority Tags</span><div class="related-items">${formatTags(o.priority_tags)}</div></div>
+      <div class="output-section"><span class="label">Related Tools</span><div class="related-items" id="objectiveRelatedTools">${relToolsHTML||'None'}</div></div>
+      <div class="output-section"><span class="label">Related Scenarios</span><div class="related-items" id="relatedScenarios">Loading…</div></div>
+    `;
+    // attach listeners to newly injected tags
+    out.querySelectorAll('#objectiveRelatedTools .tag[data-tool-id]').forEach(tag=>{
+      tag.addEventListener('click',()=>showToolDetails(tag.dataset.toolId));
+      tag.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();showToolDetails(tag.dataset.toolId);} });
+    });
+    updateSidebarState('objective',id);
+    if(!fromHash) updateURLHash('objective',id);
+    // out.scrollIntoView({behavior:'smooth',block:'start'});
+    findRelatedScenarios(id);
+    showNotification(`Viewing objective: ${o.title}`);
+  }
+  function findRelatedScenarios(objId){
+    let cont=document.getElementById('relatedScenarios');
+    cont.innerHTML='';
+    let rel=scenariosData.filter(s=> (s.objective_ids||'').split(',').map(x=>x.trim()).includes(objId));
+    if(rel.length===0){cont.textContent='No related scenarios.';return;}
+    rel.forEach(s=>{
+      let tag=document.createElement('span');
+      tag.className='tag'; tag.textContent=s.title;
+      tag.setAttribute('role','button'); tag.setAttribute('tabindex','0');
+      tag.addEventListener('click',()=>showScenarioDetails(s.scenario_id));
+      tag.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();showScenarioDetails(s.scenario_id);} });
+      cont.appendChild(tag);
+    });
+  }
+
+  function showScenarioDetails(id,fromHash=false){
+    let s=scenariosData.find(x=>x.scenario_id===id);
+    let out=document.getElementById('output');
+    if(!s){if(fromHash) out.innerHTML='<div class="error-msg">Scenario not found.</div>';return;}
+    out.className='output scenario';
+    let rtIds=(s.tool_ids||'').split(',').map(x=>x.trim()).filter(x=>x);
+    let roIds=(s.objective_ids||'').split(',').map(x=>x.trim()).filter(x=>x);
+    let rtHTML=rtIds.map(tid=>{
+      let t=toolsData.find(x=>x.tool_id===tid);
+      return t?`<span class="tag" role="button" tabindex="0" data-tool-id="${tid}">${t.name}</span>`:`<span class="tag disabled">${tid}</span>`;
+    }).join(' ');
+    let roHTML=roIds.map(oid=>{
+      let o=objectivesData.find(x=>x.objective_id===oid);
+      return o?`<span class="tag" role="button" tabindex="0" data-objective-id="${oid}">${o.title}</span>`:`<span class="tag disabled">${oid}</span>`;
+    }).join(' ');
+    out.innerHTML=`
+      <h3 class="output-title">${s.title}</h3>
+      ${createOutputField('Summary',s.summary)}
+      ${createOutputField('Context',s.context)}
+      ${createOutputField('Intervention Summary',s.intervention_summary)}
+      ${createOutputField('Notes on Design',s.notes_on_design)}
+      ${createOutputField('Reference Programmes',s.reference_programmes)}
+      <div class="output-section"><span class="label">Related Tools</span><div class="related-items" id="scenarioRelatedTools">${rtHTML||'None'}</div></div>
+      <div class="output-section"><span class="label">Related Objectives</span><div class="related-items" id="scenarioRelatedObjectives">${roHTML||'None'}</div></div>
+      <div class="output-section"><span class="label">Sources</span><div class="output-field">${formatLinks(s.sources)}</div></div>
+    `;
+    // bind events
+    out.querySelectorAll('#scenarioRelatedTools .tag[data-tool-id]').forEach(tag=>{
+      tag.addEventListener('click',()=>showToolDetails(tag.dataset.toolId));
+      tag.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();showToolDetails(tag.dataset.toolId);} });
+    });
+    out.querySelectorAll('#scenarioRelatedObjectives .tag[data-objective-id]').forEach(tag=>{
+      tag.addEventListener('click',()=>showObjectiveDetails(tag.dataset.objectiveId));
+      tag.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();showObjectiveDetails(tag.dataset.objectiveId);} });
+    });
+    updateSidebarState('scenario',id);
+    if(!fromHash) updateURLHash('scenario',id);
+    // out.scrollIntoView({behavior:'smooth',block:'start'});
+    showNotification(`Viewing scenario: ${s.title}`);
+  }
+
+  function createOutputField(label,content){
+    if(!content||!String(content).trim())return'';
+    return`<div class="output-section"><span class="label">${label}</span><div class="output-field">${content}</div></div>`;
+  }
+
+  function handleHash(){
+    if(isLoading && location.hash) return;
+    let h=location.hash.slice(1);
+    if(!h){
+      document.querySelectorAll('.card.active').forEach(c=>c.classList.remove('active'));
+      document.getElementById('output').innerHTML=`
+        <h3 class="output-title">Explore R&D Policy Toolkit</h3>
+        <p>Select a tool, objective or scenario…</p>`;
+      return;
+    }
+    let [type,id]=h.split('/');
+    if(type==='tool') showToolDetails(id,true);
+    if(type==='objective') showObjectiveDetails(id,true);
+    if(type==='scenario') showScenarioDetails(id,true);
+  }
+  </script>
+</body>
+</html>
