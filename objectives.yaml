@@ -1,0 +1,57 @@
+objectives:
+  increase_business_rd_investment:
+    name: "Increase business R&D investment"
+    description: ""
+    tools: ["r_d_tax_reliefs", "r_d_tax_relief"]
+  support_sme_innovation:
+    name: "Support SME innovation"
+    description: ""
+    tools: ["r_d_tax_reliefs", "r_d_tax_relief"]
+  support_collaborative_rd:
+    name: "Support collaborative R&D"
+    description: ""
+    tools: []
+  support_growth_driving_sectors:
+    name: "Support growth-driving sectors"
+    description: ""
+    tools: []
+  strengthen_economic_security:
+    name: "Strengthen economic security"
+    description: ""
+    tools: []
+  accelerate_net_zero_innovation:
+    name: "Accelerate net zero innovation"
+    description: ""
+    tools: []
+  drive_regional_economic_growth:
+    name: "Drive regional economic growth"
+    description: ""
+    tools: []
+  develop_innovation_clusters:
+    name: "Develop innovation clusters"
+    description: ""
+    tools: []
+  support_early_stage_research:
+    name: "Support early-stage research"
+    description: ""
+    tools: []
+  support_applied_rd_commercialization:
+    name: "Support applied R&D and commercialization"
+    description: ""
+    tools: []
+  create_markets_for_innovation:
+    name: "Create markets for innovation"
+    description: ""
+    tools: []
+  solve_government_challenges:
+    name: "Solve government challenges"
+    description: ""
+    tools: []
+  support_adoption_new_technologies:
+    name: "Support adoption of new technologies"
+    description: ""
+    tools: []
+  increase_high_skilled_talent_supply:
+    name: "Increase high-skilled talent supply"
+    description: ""
+    tools: []

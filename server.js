@@ -38,6 +38,33 @@ app.put('/tools.yaml', (req, res) => {
     }
 });
 
+// Get objectives.yaml
+app.get('/objectives.yaml', (req, res) => {
+    try {
+        if (fs.existsSync('objectives.yaml')) {
+            const data = fs.readFileSync('objectives.yaml', 'utf8');
+            res.type('text/yaml').send(data);
+        } else {
+            res.type('text/yaml').send('objectives:\n');
+        }
+    } catch (err) {
+        console.error('Error reading objectives.yaml:', err);
+        res.status(500).send('Error reading file');
+    }
+});
+
+// Save objectives.yaml
+app.put('/objectives.yaml', (req, res) => {
+    try {
+        fs.writeFileSync('objectives.yaml', req.body, 'utf8');
+        console.log('objectives.yaml saved successfully');
+        res.send('OK');
+    } catch (err) {
+        console.error('Error writing objectives.yaml:', err);
+        res.status(500).send('Error writing file');
+    }
+});
+
 app.listen(PORT, () => {
     console.log(`Server running at http://localhost:${PORT}`);
     console.log('Open your browser to http://localhost:3000');

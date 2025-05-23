@@ -1,5 +1,6 @@
 tools:
   - name: "R&D Tax Reliefs"
+    tag: "r_d_tax_reliefs"
 
     # HOW IT WORKS
     how_it_works: "Companies submit documentation detailing qualifying R&D expenditure and can claim taxable credit at 20% under RDEC. Loss-making R&D-intensive SMEs can access ERIS with enhanced deduction of 86% and payable tax credit up to 14.5%."
@@ -10,7 +11,7 @@ tools:
     # WHEN TO USE IT
     when_to_use:
       objectives: ["increase_business_rd_investment", "support_sme_innovation"]
-      optimal_conditions: "Established business base, mature tax infrastructure, stable fiscal outlook."
+      optimal_conditions: "Established business base, mature tax infrastructure, and stable fiscal outlook."
       implementation_tips: "Expect fraud risk – build robust verification processes from the start."
 
     # TARGETABILITY
@@ -34,7 +35,7 @@ tools:
     # EVIDENCE
     evidence:
       quality: "Medium"
-      innovation_additionality: "**Contested evidence.** RDEC shows £2.40-£2.70 additional R&D per £1 public money, while SME scheme shows £0.60-£1.28 per £1. Significant methodological debates exist about measurement approaches."
+      innovation_additionality: "**Evidence of additionality; exact amount contested.** RDEC shows £2.40-£2.70 additional R&D per £1 public money, while SME scheme shows £0.60-£1.28 per £1. Significant methodological debates exist about measurement approaches."
       time_to_impact: "**Fast cash, slow impact.** Companies receive refunds within months of filing, but economic benefits (productivity gains, new products) emerge over years as R&D translates to innovation."
 
     # RECOMMENDATIONS
@@ -42,14 +43,25 @@ tools:
 
     # IMPLEMENTATION
     delivery:
-      potential_bodies: ["HMRC", "BEIS", "UKRI"]
+      potential_bodies: ["HMRC"]
       administrative_complexity: "**Low** – operates with existing tax infrastructure, administrative costs are pushed to beneficiaries "
       flexibility: "**Medium** – tax changes can be introduced at fiscal events (budgets, spending reviews, etc), but can prove controversial if introduced without warning"
+
+    # REFERENCE
+    further_reading:
+      - title: "R&D Tax Credit Statistics, September 2024"
+        source: "HMRC"
+        url: "https://www.gov.uk/government/statistics/corporate-tax-research-and-development-tax-credit/research-and-development-tax-credits-statistics-september-2024#key-points"
+      - title: "A Toolkit of Policies to Promote Innovation"
+        source: "Bloom N. et al. "
+        url: "https://www.aeaweb.org/articles?id=10.1257/jep.33.3.163"
+      - title: "Industrial policies: New evidence for the UK"
+        source: "CMA"
+        url: "https://assets.publishing.service.gov.uk/media/67f8d0226812c7adcf513f06/Industrial_policies_new_evidence_for_the_UK.pdf"
 
     # TAGS FOR CROSS-NAVIGATION
     tags:
       innovation_stage: ["early_stage", "applied_research", "development", "demonstration", "deployment"]
-      policy_objectives: ["increase_rd_spending", "support_smes", "broad_innovation_stimulus"]
       sectors: ["cross_sector", "manufacturing", "ict", "life_sciences", "aerospace", "automotive", "energy", "professional_services"]
       delivery_mechanism: ["tax_incentive", "automatic_entitlement"]
       targeting: ["broad_based", "firm_size", "business_focused"]

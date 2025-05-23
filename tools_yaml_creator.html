@@ -398,11 +398,13 @@
             <div class="header-controls">
                 <div>
                     <h1 id="current-tool-name">Select a tool to edit</h1>
-                    <div class="status-indicator" id="status-indicator" style="display: none;">Saved</div>
                 </div>
-                <div class="header-buttons">
-                    <button class="btn btn-secondary" onclick="cancelChanges()" id="cancel-btn" style="display: none;">Cancel</button>
-                    <button class="btn btn-success" onclick="saveTool()" id="save-btn" style="display: none;">Save</button>
+                <div style="display: flex; align-items: center; gap: 15px; margin-left: auto;">
+                    <div class="header-buttons">
+                        <button class="btn btn-secondary" onclick="cancelChanges()" id="cancel-btn" style="display: none;">Cancel</button>
+                        <button class="btn btn-success" onclick="saveTool()" id="save-btn" style="display: none;">Save</button>
+                    </div>
+                    <div class="status-indicator" id="status-indicator" style="display: none;">Saved</div>
                 </div>
             </div>
             
@@ -414,17 +416,18 @@
                     <h2>Basic Information</h2>
                     <div class="form-group">
                         <label for="name">Tool Name *</label>
-                        <input type="text" id="name" required placeholder="e.g. R&D Tax Reliefs">
+                        <input type="text" id="name" name="name" required placeholder="e.g. R&D Tax Reliefs" oninput="updateToolTag()">
+                        <div class="help-text">Auto-generated tag: <span id="tool_tag" style="font-family: monospace; color: #4a5568;"></span></div>
                     </div>
                     
                     <div class="form-group">
                         <label for="how_it_works">How It Works *</label>
-                        <textarea id="how_it_works" required placeholder="Brief description of the mechanism..."></textarea>
+                        <textarea id="how_it_works" name="how_it_works" required placeholder="Brief description of the mechanism..."></textarea>
                     </div>
                     
                     <div class="form-group">
                         <label for="aims">Aims *</label>
-                        <textarea id="aims" required placeholder="What the tool is trying to achieve..."></textarea>
+                        <textarea id="aims" name="aims" required placeholder="What the tool is trying to achieve..."></textarea>
                     </div>
                     
                     <!-- When to Use It -->
@@ -452,12 +455,12 @@
                     
                     <div class="form-group">
                         <label for="optimal_conditions">Optimal Conditions</label>
-                        <textarea id="optimal_conditions" placeholder="Best circumstances for this tool..."></textarea>
+                        <textarea id="optimal_conditions" name="optimal_conditions" placeholder="Best circumstances for this tool..."></textarea>
                     </div>
                     
                     <div class="form-group">
                         <label for="implementation_tips">Implementation Tips</label>
-                        <textarea id="implementation_tips" placeholder="Practical advice for implementation..."></textarea>
+                        <textarea id="implementation_tips" name="implementation_tips" placeholder="Practical advice for implementation..."></textarea>
                     </div>
                     
                     <!-- Targetability -->
@@ -465,30 +468,30 @@
                     <div class="form-row">
                         <div class="form-group">
                             <label for="sectoral">Sectoral Targeting</label>
-                            <textarea id="sectoral" placeholder="High/Medium/Low + explanation..."></textarea>
+                            <textarea id="sectoral" name="sectoral" placeholder="High/Medium/Low + explanation..."></textarea>
                         </div>
                         
                         <div class="form-group">
                             <label for="technological">Technological Targeting</label>
-                            <textarea id="technological" placeholder="High/Medium/Low + explanation..."></textarea>
+                            <textarea id="technological" name="technological" placeholder="High/Medium/Low + explanation..."></textarea>
                         </div>
                     </div>
                     
                     <div class="form-row">
                         <div class="form-group">
                             <label for="regional">Regional Targeting</label>
-                            <textarea id="regional" placeholder="High/Medium/Low + explanation..."></textarea>
+                            <textarea id="regional" name="regional" placeholder="High/Medium/Low + explanation..."></textarea>
                         </div>
                         
                         <div class="form-group">
                             <label for="by_firm_type">By Firm Type</label>
-                            <textarea id="by_firm_type" placeholder="High/Medium/Low + explanation..."></textarea>
+                            <textarea id="by_firm_type" name="by_firm_type" placeholder="High/Medium/Low + explanation..."></textarea>
                         </div>
                     </div>
                     
                     <div class="form-group">
                         <label for="overall_assessment">Overall Assessment</label>
-                        <textarea id="overall_assessment" placeholder="Summary of targeting capabilities..."></textarea>
+                        <textarea id="overall_assessment" name="overall_assessment" placeholder="Summary of targeting capabilities..."></textarea>
                     </div>
                     
                     <!-- Strengths & Weaknesses -->
@@ -496,12 +499,12 @@
                     <div class="form-row">
                         <div class="form-group">
                             <label for="strengths">Strengths</label>
-                            <textarea id="strengths" placeholder="Key advantages of this tool..."></textarea>
+                            <textarea id="strengths" name="strengths" placeholder="Key advantages of this tool..."></textarea>
                         </div>
                         
                         <div class="form-group">
                             <label for="weaknesses">Weaknesses</label>
-                            <textarea id="weaknesses" placeholder="Key limitations of this tool..."></textarea>
+                            <textarea id="weaknesses" name="weaknesses" placeholder="Key limitations of this tool..."></textarea>
                         </div>
                     </div>
                     
@@ -509,19 +512,19 @@
                     <h2>UK Context</h2>
                     <div class="form-group">
                         <label for="current_use">Current Use</label>
-                        <textarea id="current_use" placeholder="How the UK currently uses this tool..."></textarea>
+                        <textarea id="current_use" name="current_use" placeholder="How the UK currently uses this tool..."></textarea>
                     </div>
                     
                     <div class="form-group">
                         <label for="uk_suitability">UK Suitability</label>
-                        <textarea id="uk_suitability" placeholder="How well this tool fits the UK context..."></textarea>
+                        <textarea id="uk_suitability" name="uk_suitability" placeholder="How well this tool fits the UK context..."></textarea>
                     </div>
                     
                     <!-- Evidence -->
                     <h2>Evidence</h2>
                     <div class="form-group">
                         <label for="quality">Evidence Quality</label>
-                        <select id="quality">
+                        <select id="quality" name="quality">
                             <option value="">Select quality...</option>
                             <option value="High">High</option>
                             <option value="Medium">Medium</option>
@@ -531,24 +534,24 @@
                     
                     <div class="form-group">
                         <label for="innovation_additionality">Innovation Additionality</label>
-                        <textarea id="innovation_additionality" class="textarea-large" placeholder="Evidence on additional R&D generated (support **bold** text)..."></textarea>
+                        <textarea id="innovation_additionality" name="innovation_additionality" class="textarea-large" placeholder="Evidence on additional R&D generated (support **bold** text)..."></textarea>
                         <div class="help-text">Use **bold** for emphasis, e.g. **Contested evidence.**</div>
                     </div>
                     
                     <div class="form-group">
                         <label for="time_to_impact">Time to Impact</label>
-                        <textarea id="time_to_impact" placeholder="How quickly benefits materialize..."></textarea>
+                        <textarea id="time_to_impact" name="time_to_impact" placeholder="How quickly benefits materialize..."></textarea>
                     </div>
                     
                     <div class="form-row">
                         <div class="form-group">
                             <label for="good_practice_example">Good Practice Example</label>
-                            <textarea id="good_practice_example" placeholder="Examples of successful implementation..."></textarea>
+                            <textarea id="good_practice_example" name="good_practice_example" placeholder="Examples of successful implementation..."></textarea>
                         </div>
                         
                         <div class="form-group">
                             <label for="bad_practice_example">Bad Practice Example</label>
-                            <textarea id="bad_practice_example" placeholder="Examples of poor implementation..."></textarea>
+                            <textarea id="bad_practice_example" name="bad_practice_example" placeholder="Examples of poor implementation..."></textarea>
                         </div>
                     </div>
                     
@@ -556,7 +559,7 @@
                     <h2>Recommendations</h2>
                     <div class="form-group">
                         <label for="recommendations">Strategic Recommendations *</label>
-                        <textarea id="recommendations" class="textarea-large" required placeholder="Free text strategic advice for policymakers (supports **bold** formatting)..."></textarea>
+                        <textarea id="recommendations" name="recommendations" class="textarea-large" required placeholder="Free text strategic advice for policymakers (supports **bold** formatting)..."></textarea>
                         <div class="help-text">Provide nuanced advice on when/how to use this tool effectively</div>
                     </div>
                     
@@ -564,18 +567,18 @@
                     <h2>Implementation</h2>
                     <div class="form-group">
                         <label for="potential_bodies">Potential Delivery Bodies</label>
-                        <input type="text" id="potential_bodies" placeholder="HMRC, BEIS, UKRI (comma-separated)">
+                        <input type="text" id="potential_bodies" name="potential_bodies" placeholder="HMRC, BEIS, UKRI (comma-separated)">
                     </div>
                     
                     <div class="form-row">
                         <div class="form-group">
                             <label for="administrative_complexity">Administrative Complexity</label>
-                            <textarea id="administrative_complexity" placeholder="High/Medium/Low + explanation..."></textarea>
+                            <textarea id="administrative_complexity" name="administrative_complexity" placeholder="High/Medium/Low + explanation..."></textarea>
                         </div>
                         
                         <div class="form-group">
                             <label for="flexibility">Flexibility</label>
-                            <textarea id="flexibility" placeholder="High/Medium/Low + explanation..."></textarea>
+                            <textarea id="flexibility" name="flexibility" placeholder="High/Medium/Low + explanation..."></textarea>
                         </div>
                     </div>
                     
@@ -603,18 +606,6 @@
                     </div>
                     
                     <div class="form-group">
-                        <label>Policy Objectives</label>
-                        <div class="tag-checkboxes" id="policy_objectives_tags">
-                            <div class="checkbox-item"><input type="checkbox" value="increase_rd_spending"> <span>Increase R&D Spending</span></div>
-                            <div class="checkbox-item"><input type="checkbox" value="support_smes"> <span>Support SMEs</span></div>
-                            <div class="checkbox-item"><input type="checkbox" value="regional_growth"> <span>Regional Growth</span></div>
-                            <div class="checkbox-item"><input type="checkbox" value="net_zero"> <span>Net Zero</span></div>
-                            <div class="checkbox-item"><input type="checkbox" value="economic_security"> <span>Economic Security</span></div>
-                            <div class="checkbox-item"><input type="checkbox" value="broad_innovation_stimulus"> <span>Broad Innovation Stimulus</span></div>
-                        </div>
-                    </div>
-                    
-                    <div class="form-group">
                         <label>Sectors</label>
                         <div class="tag-checkboxes" id="sectors_tags">
                             <div class="checkbox-item"><input type="checkbox" value="cross_sector"> <span>Cross-Sector</span></div>
@@ -631,14 +622,18 @@
                     <div class="form-group">
                         <label>Delivery Mechanism</label>
                         <div class="tag-checkboxes" id="delivery_mechanism_tags">
-                            <div class="checkbox-item"><input type="checkbox" value="tax_incentive"> <span>Tax Incentive</span></div>
-                            <div class="checkbox-item"><input type="checkbox" value="grant"> <span>Grant</span></div>
-                            <div class="checkbox-item"><input type="checkbox" value="loan"> <span>Loan</span></div>
-                            <div class="checkbox-item"><input type="checkbox" value="guarantee"> <span>Guarantee</span></div>
-                            <div class="checkbox-item"><input type="checkbox" value="procurement"> <span>Procurement</span></div>
-                            <div class="checkbox-item"><input type="checkbox" value="regulation"> <span>Regulation</span></div>
-                            <div class="checkbox-item"><input type="checkbox" value="automatic_entitlement"> <span>Automatic Entitlement</span></div>
-                            <div class="checkbox-item"><input type="checkbox" value="competitive"> <span>Competitive</span></div>
+                            <div class="checkbox-item"><input type="checkbox" value="tax_incentive"> <span>Tax incentive</span></div>
+                            <div class="checkbox-item"><input type="checkbox" value="direct_grant"> <span>Direct R&D grant</span></div>
+                            <div class="checkbox-item"><input type="checkbox" value="collaborative_grant"> <span>Collaborative R&D grant with co-investment</span></div>
+                            <div class="checkbox-item"><input type="checkbox" value="challenge_grant"> <span>Challenge- or mission-led grant</span></div>
+                            <div class="checkbox-item"><input type="checkbox" value="place_based_grant"> <span>Regional/cluster-focused grant</span></div>
+                            <div class="checkbox-item"><input type="checkbox" value="innovation_procurement"> <span>Government procurement as early customer</span></div>
+                            <div class="checkbox-item"><input type="checkbox" value="innovation_prize"> <span>Prizes and other inducements</span></div>
+                            <div class="checkbox-item"><input type="checkbox" value="market_commitment"> <span>Commitment to future purchase</span></div>
+                            <div class="checkbox-item"><input type="checkbox" value="immigration_scheme"> <span>Visas and immigration routes</span></div>
+                            <div class="checkbox-item"><input type="checkbox" value="automatic_entitlement"> <span>Automatic entitlement</span></div>
+                            <div class="checkbox-item"><input type="checkbox" value="innovation_loan"> <span>Innovation loan</span></div>
+                            <div class="checkbox-item"><input type="checkbox" value="innovation_voucher"> <span>Innovation voucher</span></div>
                         </div>
                     </div>
                     
@@ -713,7 +708,7 @@
         
         async function loadTools() {
             try {
-                const response = await fetch('tools.yaml');
+                const response = await fetch('/tools.yaml');
                 if (response.ok) {
                     const yamlContent = await response.text();
                     tools = parseYAML(yamlContent);
@@ -736,6 +731,8 @@
             let currentSection = null;
             let currentSubsection = null;
             let indent = 0;
+            
+            console.log('Parsing YAML content:', yamlContent); // Debug log
             
             for (let line of lines) {
                 const trimmed = line.trim();
@@ -776,7 +773,9 @@
                             currentTool[currentSection][key] = arrayValue;
                         } else if (currentSection === 'when_to_use' && key === 'objectives' && value.startsWith('[')) {
                             // Array value for objectives
+                            console.log('Found objectives line:', value); // Debug log
                             const arrayValue = value.replace(/[\[\]]/g, '').split(',').map(s => s.trim().replace(/"/g, ''));
+                            console.log('Parsed objectives:', arrayValue); // Debug log
                             currentTool[currentSection][key] = arrayValue;
                         } else if (currentSection === 'delivery' && key === 'potential_bodies' && value.startsWith('[')) {
                             // Array value for potential_bodies
@@ -798,6 +797,7 @@
                 }
             }
             
+            console.log('Parsed tools:', parsedTools); // Debug log
             return parsedTools;
         }
         
@@ -853,19 +853,23 @@
         function loadToolIntoForm(tool) {
             clearForm();
             
+            // Remove form change tracking temporarily
+            const form = document.getElementById('toolForm');
+            const inputs = form.querySelectorAll('input, textarea, select');
+            inputs.forEach(input => {
+                input.removeEventListener('input', trackChanges);
+                input.removeEventListener('change', trackChanges);
+            });
+            
             // Basic fields
             document.getElementById('name').value = tool.name || '';
+            updateToolTag();
             document.getElementById('how_it_works').value = tool.how_it_works || '';
             document.getElementById('aims').value = tool.aims || '';
             
             // When to use it
             if (tool.when_to_use) {
-                if (tool.when_to_use.objectives && Array.isArray(tool.when_to_use.objectives)) {
-                    tool.when_to_use.objectives.forEach(objective => {
-                        const checkbox = document.querySelector(`#objectives_checkboxes input[value="${objective}"]`);
-                        if (checkbox) checkbox.checked = true;
-                    });
-                }
+                loadObjectives(tool.when_to_use.objectives || []);
                 document.getElementById('optimal_conditions').value = tool.when_to_use.optimal_conditions || '';
                 document.getElementById('implementation_tips').value = tool.when_to_use.implementation_tips || '';
             }
@@ -920,15 +924,49 @@
             document.getElementById('form-container').style.display = 'block';
             document.getElementById('empty-state').style.display = 'none';
             
-            // Store original state for change detection
-            originalFormState = getFormState();
-            setUnsavedChanges(false);
+            // Re-enable form change tracking after a short delay
+            setTimeout(() => {
+                setupFormChangeTracking();
+                // Store original state for change detection
+                originalFormState = getFormState();
+                setUnsavedChanges(false);
+            }, 100);
         }
         
+        function loadObjectives(objectives) {
+            console.log('Loading objectives:', objectives);
+            clearAllObjectives();
+            
+            if (Array.isArray(objectives)) {
+                // Use setTimeout to ensure this runs after any potential resets
+                setTimeout(() => {
+                    objectives.forEach(value => {
+                        console.log('Setting objective:', value);
+                        const checkbox = document.querySelector(`#objectives_checkboxes input[value="${value}"]`);
+                        if (checkbox) {
+                            checkbox.checked = true;
+                            console.log('Found and checked checkbox for:', value);
+                            // Manually trigger a change event
+                            const event = new Event('change', { bubbles: true });
+                            checkbox.dispatchEvent(event);
+                        } else {
+                            console.log('Could not find checkbox for:', value);
+                        }
+                    });
+                    console.log('Finished setting objectives');
+                }, 0);
+            }
+        }
+
+        function clearAllObjectives() {
+            document.querySelectorAll('#objectives_checkboxes input[type="checkbox"]').forEach(cb => cb.checked = false);
+        }
+
         function clearForm() {
             document.getElementById('toolForm').reset();
             document.getElementById('references-list').innerHTML = '';
             clearAllTags();
+            clearAllObjectives();
             referenceCount = 0;
             addReference(); // Add one default reference
         }
@@ -966,7 +1004,6 @@
         
         function clearAllTags() {
             document.querySelectorAll('.tag-checkboxes input[type="checkbox"]').forEach(cb => cb.checked = false);
-            document.querySelectorAll('#objectives_checkboxes input[type="checkbox"]').forEach(cb => cb.checked = false);
         }
         
         function addReference() {
@@ -1015,29 +1052,48 @@
             const form = document.getElementById('toolForm');
             if (!form) return;
             
+            // Remove existing listeners first
             const inputs = form.querySelectorAll('input, textarea, select');
             inputs.forEach(input => {
                 input.removeEventListener('input', trackChanges);
                 input.removeEventListener('change', trackChanges);
-                input.addEventListener('input', trackChanges);
-                input.addEventListener('change', trackChanges);
+                // Use 'input' event for text inputs and textareas
+                if (input.type === 'text' || input.tagName.toLowerCase() === 'textarea') {
+                    input.addEventListener('input', trackChanges);
+                }
+                // Use 'change' event for checkboxes, selects
+                if (input.type === 'checkbox' || input.tagName.toLowerCase() === 'select') {
+                    input.addEventListener('change', trackChanges);
+                }
             });
             
-            // Also track objectives checkboxes
+            // Also track objectives checkboxes specifically
             const objectivesCheckboxes = document.querySelectorAll('#objectives_checkboxes input[type="checkbox"]');
             objectivesCheckboxes.forEach(checkbox => {
                 checkbox.removeEventListener('change', trackChanges);
                 checkbox.addEventListener('change', trackChanges);
             });
+
+            // Track reference inputs
+            document.querySelectorAll('.reference-item input').forEach(input => {
+                input.removeEventListener('input', trackChanges);
+                input.addEventListener('input', trackChanges);
+            });
         }
         
         function trackChanges() {
+            console.log('Form change detected'); // Debug log
             const currentState = getFormState();
+            console.log('Current state:', currentState); // Debug log
+            console.log('Original state:', originalFormState); // Debug log
             setUnsavedChanges(currentState !== originalFormState);
         }
         
         function getFormState() {
             const formData = new FormData(document.getElementById('toolForm'));
+            const formEntries = Array.from(formData.entries());
+            console.log('Form entries:', formEntries); // Debug log
+            
             const references = Array.from(document.querySelectorAll('.reference-item')).map(item => ({
                 title: item.querySelector('.ref-title').value,
                 source: item.querySelector('.ref-source').value,
@@ -1046,18 +1102,21 @@
             }));
             
             const tags = {};
-            ['innovation_stage', 'policy_objectives', 'sectors', 'delivery_mechanism', 'targeting', 'timeline'].forEach(category => {
-                tags[category] = getSelectedTags(category + '_tags');
+            ['innovation_stage', 'sectors', 'delivery_mechanism', 'targeting', 'timeline'].forEach(category => {
+                const selected = getSelectedTags(category + '_tags');
+                if (selected.length > 0) tags[category] = selected;
             });
             
             const objectives = getSelectedObjectives();
             
-            return JSON.stringify({
-                form: Object.fromEntries(formData),
+            const state = {
+                form: Object.fromEntries(formEntries),
                 references,
                 tags,
                 objectives
-            });
+            };
+            
+            return JSON.stringify(state);
         }
         
         function setUnsavedChanges(hasChanges) {
@@ -1118,7 +1177,12 @@
                 
                 currentTool = toolData;
                 
+                // Save the tool to tools.yaml
                 await saveToFile();
+                
+                // Update objectives.yaml with the tool tag
+                await updateObjectivesFile(toolData);
+                
                 originalFormState = getFormState();
                 setUnsavedChanges(false);
                 renderToolsList();
@@ -1131,7 +1195,7 @@
         async function saveToFile() {
             try {
                 const yamlContent = generateYAMLFromTools(tools);
-                const response = await fetch('tools.yaml', {
+                const response = await fetch('/tools.yaml', {
                     method: 'PUT',
                     headers: {
                         'Content-Type': 'text/yaml',
@@ -1148,9 +1212,155 @@
             }
         }
         
+        async function updateObjectivesFile(toolData) {
+            try {
+                // Get selected objectives
+                const selectedObjectives = getSelectedObjectives();
+                console.log('Selected objectives:', selectedObjectives);
+                if (!selectedObjectives.length) return; // No objectives selected
+                
+                let objectives = {};
+                
+                // Try to read existing objectives.yaml
+                try {
+                    const response = await fetch('/objectives.yaml');
+                    if (response.ok) {
+                        const yamlContent = await response.text();
+                        console.log('Read objectives.yaml content:', yamlContent);
+                        objectives = parseObjectivesYAML(yamlContent);
+                    } else {
+                        console.log('objectives.yaml not found, will create new file');
+                        // Initialize with empty objectives structure from the checkboxes
+                        const checkboxes = document.querySelectorAll('#objectives_checkboxes input[type="checkbox"]');
+                        checkboxes.forEach(cb => {
+                            objectives[cb.value] = {
+                                name: cb.nextElementSibling.textContent.trim(),
+                                description: "",
+                                tools: []
+                            };
+                        });
+                    }
+                } catch (error) {
+                    console.log('Error reading objectives.yaml, will create new file:', error);
+                    // Initialize with empty objectives structure from the checkboxes
+                    const checkboxes = document.querySelectorAll('#objectives_checkboxes input[type="checkbox"]');
+                    checkboxes.forEach(cb => {
+                        objectives[cb.value] = {
+                            name: cb.nextElementSibling.textContent.trim(),
+                            description: "",
+                            tools: []
+                        };
+                    });
+                }
+                
+                console.log('Working with objectives:', objectives);
+                
+                // Update tools arrays for selected objectives
+                selectedObjectives.forEach(objectiveKey => {
+                    console.log('Processing objective:', objectiveKey);
+                    if (!objectives[objectiveKey]) {
+                        console.error('Objective not found:', objectiveKey);
+                        return;
+                    }
+                    
+                    if (!objectives[objectiveKey].tools) {
+                        objectives[objectiveKey].tools = [];
+                    }
+                    
+                    const toolTag = toolData.tag;
+                    console.log('Adding tool tag:', toolTag, 'to objective:', objectiveKey);
+                    if (!objectives[objectiveKey].tools.includes(toolTag)) {
+                        objectives[objectiveKey].tools.push(toolTag);
+                    }
+                });
+                
+                // Generate updated YAML content
+                const updatedYaml = generateObjectivesYAML(objectives);
+                console.log('Generated updated YAML:', updatedYaml);
+                
+                // Save back to objectives.yaml
+                const saveResponse = await fetch('/objectives.yaml', {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'text/yaml',
+                    },
+                    body: updatedYaml
+                });
+                
+                if (!saveResponse.ok) {
+                    console.error('Failed to save objectives.yaml:', saveResponse.status, saveResponse.statusText);
+                    throw new Error(`Failed to save objectives.yaml: ${saveResponse.status}`);
+                }
+            } catch (error) {
+                console.error('Detailed error in updateObjectivesFile:', error);
+                throw error;
+            }
+        }
+
+        function parseObjectivesYAML(yamlContent) {
+            const objectives = {};
+            let currentObjective = null;
+            
+            const lines = yamlContent.split('\n');
+            for (let line of lines) {
+                const trimmed = line.trim();
+                if (!trimmed || trimmed.startsWith('#')) continue;
+                
+                if (trimmed === 'objectives:') continue;
+                
+                // New objective
+                if (!line.startsWith('    ')) {
+                    const match = line.match(/^\s\s(\w+):/);
+                    if (match) {
+                        currentObjective = match[1];
+                        objectives[currentObjective] = {};
+                    }
+                    continue;
+                }
+                
+                // Objective properties
+                if (currentObjective) {
+                    if (line.includes('name:')) {
+                        objectives[currentObjective].name = line.split('name:')[1].trim().replace(/"/g, '');
+                    } else if (line.includes('description:')) {
+                        objectives[currentObjective].description = line.split('description:')[1].trim().replace(/"/g, '');
+                    } else if (line.includes('tools:')) {
+                        const toolsMatch = line.match(/tools:\s*\[(.*)\]/);
+                        if (toolsMatch) {
+                            objectives[currentObjective].tools = toolsMatch[1] ? 
+                                toolsMatch[1].split(',').map(t => t.trim().replace(/"/g, '')) : 
+                                [];
+                        } else {
+                            objectives[currentObjective].tools = [];
+                        }
+                    }
+                }
+            }
+            
+            return objectives;
+        }
+
+        function generateObjectivesYAML(objectives) {
+            let yaml = 'objectives:\n';
+            
+            Object.entries(objectives).forEach(([key, obj]) => {
+                yaml += `  ${key}:\n`;
+                yaml += `    name: "${obj.name}"\n`;
+                yaml += `    description: "${obj.description || ''}"\n`;
+                if (obj.tools && obj.tools.length > 0) {
+                    yaml += `    tools: [${obj.tools.map(t => `"${t}"`).join(', ')}]\n`;
+                } else {
+                    yaml += '    tools: []\n';
+                }
+            });
+            
+            return yaml;
+        }
+        
         function collectFormData() {
             const data = {
-                name: document.getElementById('name').value
+                name: document.getElementById('name').value,
+                tag: document.getElementById('name').dataset.tag || ''
             };
             
             // Basic fields
@@ -1234,7 +1444,7 @@
             
             // Tags
             const tags = {};
-            ['innovation_stage', 'policy_objectives', 'sectors', 'delivery_mechanism', 'targeting', 'timeline'].forEach(category => {
+            ['innovation_stage', 'sectors', 'delivery_mechanism', 'targeting', 'timeline'].forEach(category => {
                 const selected = getSelectedTags(category + '_tags');
                 if (selected.length > 0) tags[category] = selected;
             });
@@ -1259,7 +1469,8 @@
             let yaml = 'tools:\n';
             
             toolsArray.forEach(tool => {
-                yaml += `  - name: "${tool.name}"\n\n`;
+                yaml += `  - name: "${tool.name}"\n`;
+                yaml += `    tag: "${tool.tag}"\n\n`;
                 
                 // HOW IT WORKS
                 if (tool.how_it_works) {
@@ -1459,6 +1670,25 @@
             setTimeout(() => {
                 messageDiv.remove();
             }, 5000);
+        }
+        
+        function updateToolTag() {
+            const nameInput = document.getElementById('name');
+            const tagDisplay = document.getElementById('tool_tag');
+            
+            const tag = nameInput.value
+                .toLowerCase()
+                // Replace special characters and spaces with underscores
+                .replace(/[^a-z0-9]+/g, '_')
+                // Remove leading/trailing underscores
+                .replace(/^_+|_+$/g, '')
+                // Replace multiple consecutive underscores with a single one
+                .replace(/_+/g, '_');
+            
+            tagDisplay.textContent = tag;
+            
+            // Store the tag in a data attribute on the name input for easy access
+            nameInput.dataset.tag = tag;
         }
     </script>
 </body>
