@@ -1,0 +1,57 @@
+tools:
+  - name: "R&D Tax Reliefs"
+
+    # HOW IT WORKS
+    how_it_works: "Companies submit documentation detailing qualifying R&D expenditure and can claim taxable credit at 20% under RDEC. Loss-making R&D-intensive SMEs can access ERIS with enhanced deduction of 86% and payable tax credit up to 14.5%."
+
+    # AIMS
+    aims: "Support companies to invest in innovative projects in science and technology. Unlock additional private sector investment to drive economic growth across the UK."
+
+    # WHEN TO USE IT
+    when_to_use:
+      objectives: ["increase_business_rd_investment", "support_sme_innovation"]
+      optimal_conditions: "Established business base, mature tax infrastructure, stable fiscal outlook."
+      implementation_tips: "Expect fraud risk – build robust verification processes from the start."
+
+    # TARGETABILITY
+    targetability:
+      sectoral: "**Low** – broad eligibility across all sectors"
+      technological: "**Low** – cannot target specific technologies or innovation priorities"
+      regional: "**Low** – no geographic differentiation in rates or eligibility"
+      by_firm_type: "**Medium** – separate schemes for SMEs vs larger companies (ERIS vs RDEC)"
+      overall_assessment: "**Broad-brush tool** – excellent for general R&D stimulus, poor for strategic targeting."
+
+    # STRENGTHS & WEAKNESSES
+    strengths_weaknesses:
+      strengths: "High leverage (£7.5B generates £46.7B R&D), low administrative complexity, fast cash delivery, established HMRC processes. "
+      weaknesses: "Limited strategic targeting capability, moderate fraud risk (£1B lost in 2020-21), contested evidence on additionality."
+
+    # UK CONTEXT
+    uk_context:
+      current_use: "Provisional estimated number of claims for the year 2022 to 2023 is 65,690. This is comprised of 55,325 SME scheme claims and 10,365 RDEC scheme claims. "
+      uk_suitability: "Well-suited to UK's service-driven economy and historical preference for tax measures over direct spending. Contrasts with most other OECD countries which favour direct subsidies. "
+
+    # EVIDENCE
+    evidence:
+      quality: "Medium"
+      innovation_additionality: "**Contested evidence.** RDEC shows £2.40-£2.70 additional R&D per £1 public money, while SME scheme shows £0.60-£1.28 per £1. Significant methodological debates exist about measurement approaches."
+      time_to_impact: "**Fast cash, slow impact.** Companies receive refunds within months of filing, but economic benefits (productivity gains, new products) emerge over years as R&D translates to innovation."
+
+    # RECOMMENDATIONS
+    recommendations: "Use R&D tax credits as part of a broad-based innovation strategy, particularly in service-driven economies like the UK. Not suitable when strategic targeting of specific technologies or regions is the priority. Consider combining with direct grants or other tools for strategic priorities that tax credits cannot address. If implementing, build robust anti-fraud measures from the start - the UK's experience shows this is critical. The UK's heavy reliance on tax credits vs. direct measures may reflect its economic structure, but policymakers should consider whether more direct intervention is needed for manufacturing competitiveness or strategic technology priorities like AI or clean energy."
+
+    # IMPLEMENTATION
+    delivery:
+      potential_bodies: ["HMRC", "BEIS", "UKRI"]
+      administrative_complexity: "**Low** – operates with existing tax infrastructure, administrative costs are pushed to beneficiaries "
+      flexibility: "**Medium** – tax changes can be introduced at fiscal events (budgets, spending reviews, etc), but can prove controversial if introduced without warning"
+
+    # TAGS FOR CROSS-NAVIGATION
+    tags:
+      innovation_stage: ["early_stage", "applied_research", "development", "demonstration", "deployment"]
+      policy_objectives: ["increase_rd_spending", "support_smes", "broad_innovation_stimulus"]
+      sectors: ["cross_sector", "manufacturing", "ict", "life_sciences", "aerospace", "automotive", "energy", "professional_services"]
+      delivery_mechanism: ["tax_incentive", "automatic_entitlement"]
+      targeting: ["broad_based", "firm_size", "business_focused"]
+      timeline: ["immediate_cash_flow", "long_term_innovation", "fast_implementation"]
+

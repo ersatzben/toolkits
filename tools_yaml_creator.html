@@ -1,0 +1,1465 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>R&D Policy Tools Manager</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            background: #f8fafc;
+            color: #1a202c;
+            display: flex;
+            height: 100vh;
+        }
+        
+        .sidebar {
+            width: 300px;
+            background: white;
+            border-right: 2px solid #e2e8f0;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            overflow-y: auto;
+        }
+        
+        .sidebar-header {
+            padding: 20px;
+            border-bottom: 1px solid #e2e8f0;
+            background: #f7fafc;
+        }
+        
+        .sidebar-header h2 {
+            margin: 0 0 15px 0;
+            color: #2d3748;
+            font-size: 18px;
+        }
+        
+        .new-tool-btn {
+            width: 100%;
+            padding: 10px;
+            background: #3182ce;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+        }
+        
+        .new-tool-btn:hover {
+            background: #2c5282;
+        }
+        
+        .tools-list {
+            flex: 1;
+            padding: 0;
+        }
+        
+        .tool-item {
+            padding: 15px 20px;
+            border-bottom: 1px solid #e2e8f0;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            display: flex;
+            justify-content: between;
+            align-items: center;
+        }
+        
+        .tool-item:hover {
+            background: #f7fafc;
+        }
+        
+        .tool-item.active {
+            background: #ebf8ff;
+            border-right: 3px solid #3182ce;
+        }
+        
+        .tool-item.modified {
+            background: #fef5e7;
+            border-right: 3px solid #f6ad55;
+        }
+        
+        .tool-name {
+            font-weight: 500;
+            color: #2d3748;
+        }
+        
+        .tool-status {
+            font-size: 12px;
+            color: #718096;
+            margin-top: 3px;
+        }
+        
+        .delete-btn {
+            padding: 4px 8px;
+            background: #e53e3e;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 11px;
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+        
+        .tool-item:hover .delete-btn {
+            opacity: 1;
+        }
+        
+        .main-content {
+            flex: 1;
+            height: 100vh;
+            overflow-y: auto;
+            position: relative;
+        }
+        
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            min-height: 100vh;
+        }
+        
+        .header-controls {
+            display: flex;
+            justify-content: between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #e2e8f0;
+        }
+        
+        .header-controls h1 {
+            margin: 0;
+            color: #2d3748;
+        }
+        
+        .header-buttons {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .status-indicator {
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+        
+        .status-saved {
+            background: #c6f6d5;
+            color: #22543d;
+        }
+        
+        .status-modified {
+            background: #fef5e7;
+            color: #7c2d12;
+        }
+        
+        .status-new {
+            background: #dbeafe;
+            color: #1e3a8a;
+        }
+        
+        h2 {
+            color: #4a5568;
+            border-left: 4px solid #3182ce;
+            padding-left: 15px;
+            margin-top: 30px;
+            margin-bottom: 15px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #2d3748;
+        }
+        
+        input[type="text"], 
+        textarea, 
+        select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: border-color 0.2s;
+        }
+        
+        input[type="text"]:focus, 
+        textarea:focus, 
+        select:focus {
+            outline: none;
+            border-color: #3182ce;
+            box-shadow: 0 0 0 3px rgba(49, 130, 206, 0.1);
+        }
+        
+        textarea {
+            min-height: 100px;
+            resize: vertical;
+            font-family: inherit;
+        }
+        
+        .textarea-large {
+            min-height: 150px;
+        }
+        
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        
+        .references-container {
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 15px;
+        }
+        
+        .reference-item {
+            background: #f7fafc;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+        }
+        
+        .reference-item:last-child {
+            margin-bottom: 0;
+        }
+        
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+        
+        .btn-primary {
+            background: #3182ce;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: #2c5282;
+        }
+        
+        .btn-secondary {
+            background: #718096;
+            color: white;
+        }
+        
+        .btn-secondary:hover {
+            background: #4a5568;
+        }
+        
+        .btn-danger {
+            background: #e53e3e;
+            color: white;
+        }
+        
+        .btn-danger:hover {
+            background: #c53030;
+        }
+        
+        .btn-success {
+            background: #38a169;
+            color: white;
+        }
+        
+        .btn-success:hover {
+            background: #2f855a;
+        }
+        
+        .tag-checkboxes {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 10px;
+            margin-top: 10px;
+        }
+        
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .checkbox-item input[type="checkbox"] {
+            width: auto;
+        }
+        
+        .help-text {
+            font-size: 12px;
+            color: #718096;
+            margin-top: 5px;
+            font-style: italic;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #718096;
+        }
+        
+        .empty-state h3 {
+            margin-bottom: 10px;
+            color: #4a5568;
+        }
+        
+        .loading {
+            display: flex;
+            justify-content: center;
+            align-items: center;  
+            height: 200px;
+            color: #718096;
+        }
+        
+        .error-message {
+            background: #fed7d7;
+            color: #742a2a;
+            padding: 10px 15px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            border: 1px solid #feb2b2;
+        }
+        
+        .success-message {
+            background: #c6f6d5;
+            color: #22543d;
+            padding: 10px 15px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            border: 1px solid #9ae6b4;
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .modal.show {
+            display: flex;
+        }
+        
+        .modal-content {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            max-width: 400px;
+            width: 90%;
+        }
+        
+        .modal-buttons {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <h2>R&D Policy Tools</h2>
+            <button class="new-tool-btn" onclick="createNewTool()">+ New Tool</button>
+        </div>
+        <div class="tools-list" id="tools-list">
+            <div class="loading">Loading tools...</div>
+        </div>
+    </div>
+    
+    <div class="main-content">
+        <div class="container">
+            <div class="header-controls">
+                <div>
+                    <h1 id="current-tool-name">Select a tool to edit</h1>
+                    <div class="status-indicator" id="status-indicator" style="display: none;">Saved</div>
+                </div>
+                <div class="header-buttons">
+                    <button class="btn btn-secondary" onclick="cancelChanges()" id="cancel-btn" style="display: none;">Cancel</button>
+                    <button class="btn btn-success" onclick="saveTool()" id="save-btn" style="display: none;">Save</button>
+                </div>
+            </div>
+            
+            <div id="messages"></div>
+            
+            <div id="form-container" style="display: none;">
+                <form id="toolForm">
+                    <!-- Basic Info -->
+                    <h2>Basic Information</h2>
+                    <div class="form-group">
+                        <label for="name">Tool Name *</label>
+                        <input type="text" id="name" required placeholder="e.g. R&D Tax Reliefs">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="how_it_works">How It Works *</label>
+                        <textarea id="how_it_works" required placeholder="Brief description of the mechanism..."></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="aims">Aims *</label>
+                        <textarea id="aims" required placeholder="What the tool is trying to achieve..."></textarea>
+                    </div>
+                    
+                    <!-- When to Use It -->
+                    <h2>When to Use It</h2>
+                    <div class="form-group">
+                        <label>Policy Objectives This Tool Can Meet</label>
+                        <div class="tag-checkboxes" id="objectives_checkboxes">
+                            <div class="checkbox-item"><input type="checkbox" value="increase_business_rd_investment"> <span>Increase business R&D investment</span></div>
+                            <div class="checkbox-item"><input type="checkbox" value="support_sme_innovation"> <span>Support SME innovation</span></div>
+                            <div class="checkbox-item"><input type="checkbox" value="support_collaborative_rd"> <span>Support collaborative R&D</span></div>
+                            <div class="checkbox-item"><input type="checkbox" value="support_growth_driving_sectors"> <span>Support growth-driving sectors</span></div>
+                            <div class="checkbox-item"><input type="checkbox" value="strengthen_economic_security"> <span>Strengthen economic security</span></div>
+                            <div class="checkbox-item"><input type="checkbox" value="accelerate_net_zero_innovation"> <span>Accelerate net zero innovation</span></div>
+                            <div class="checkbox-item"><input type="checkbox" value="drive_regional_economic_growth"> <span>Drive regional economic growth</span></div>
+                            <div class="checkbox-item"><input type="checkbox" value="develop_innovation_clusters"> <span>Develop innovation clusters</span></div>
+                            <div class="checkbox-item"><input type="checkbox" value="support_early_stage_research"> <span>Support early-stage research</span></div>
+                            <div class="checkbox-item"><input type="checkbox" value="support_applied_rd_commercialization"> <span>Support applied R&D and commercialization</span></div>
+                            <div class="checkbox-item"><input type="checkbox" value="create_markets_for_innovation"> <span>Create markets for innovation</span></div>
+                            <div class="checkbox-item"><input type="checkbox" value="solve_government_challenges"> <span>Solve government challenges</span></div>
+                            <div class="checkbox-item"><input type="checkbox" value="support_adoption_new_technologies"> <span>Support adoption of new technologies</span></div>
+                            <div class="checkbox-item"><input type="checkbox" value="increase_high_skilled_talent_supply"> <span>Increase high-skilled talent supply</span></div>
+                        </div>
+                        <div class="help-text">Select all objectives that this tool can effectively address</div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="optimal_conditions">Optimal Conditions</label>
+                        <textarea id="optimal_conditions" placeholder="Best circumstances for this tool..."></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="implementation_tips">Implementation Tips</label>
+                        <textarea id="implementation_tips" placeholder="Practical advice for implementation..."></textarea>
+                    </div>
+                    
+                    <!-- Targetability -->
+                    <h2>Targetability</h2>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="sectoral">Sectoral Targeting</label>
+                            <textarea id="sectoral" placeholder="High/Medium/Low + explanation..."></textarea>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="technological">Technological Targeting</label>
+                            <textarea id="technological" placeholder="High/Medium/Low + explanation..."></textarea>
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="regional">Regional Targeting</label>
+                            <textarea id="regional" placeholder="High/Medium/Low + explanation..."></textarea>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="by_firm_type">By Firm Type</label>
+                            <textarea id="by_firm_type" placeholder="High/Medium/Low + explanation..."></textarea>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="overall_assessment">Overall Assessment</label>
+                        <textarea id="overall_assessment" placeholder="Summary of targeting capabilities..."></textarea>
+                    </div>
+                    
+                    <!-- Strengths & Weaknesses -->
+                    <h2>Strengths & Weaknesses</h2>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="strengths">Strengths</label>
+                            <textarea id="strengths" placeholder="Key advantages of this tool..."></textarea>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="weaknesses">Weaknesses</label>
+                            <textarea id="weaknesses" placeholder="Key limitations of this tool..."></textarea>
+                        </div>
+                    </div>
+                    
+                    <!-- UK Context -->
+                    <h2>UK Context</h2>
+                    <div class="form-group">
+                        <label for="current_use">Current Use</label>
+                        <textarea id="current_use" placeholder="How the UK currently uses this tool..."></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="uk_suitability">UK Suitability</label>
+                        <textarea id="uk_suitability" placeholder="How well this tool fits the UK context..."></textarea>
+                    </div>
+                    
+                    <!-- Evidence -->
+                    <h2>Evidence</h2>
+                    <div class="form-group">
+                        <label for="quality">Evidence Quality</label>
+                        <select id="quality">
+                            <option value="">Select quality...</option>
+                            <option value="High">High</option>
+                            <option value="Medium">Medium</option>
+                            <option value="Low">Low</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="innovation_additionality">Innovation Additionality</label>
+                        <textarea id="innovation_additionality" class="textarea-large" placeholder="Evidence on additional R&D generated (support **bold** text)..."></textarea>
+                        <div class="help-text">Use **bold** for emphasis, e.g. **Contested evidence.**</div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="time_to_impact">Time to Impact</label>
+                        <textarea id="time_to_impact" placeholder="How quickly benefits materialize..."></textarea>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="good_practice_example">Good Practice Example</label>
+                            <textarea id="good_practice_example" placeholder="Examples of successful implementation..."></textarea>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="bad_practice_example">Bad Practice Example</label>
+                            <textarea id="bad_practice_example" placeholder="Examples of poor implementation..."></textarea>
+                        </div>
+                    </div>
+                    
+                    <!-- Recommendations -->
+                    <h2>Recommendations</h2>
+                    <div class="form-group">
+                        <label for="recommendations">Strategic Recommendations *</label>
+                        <textarea id="recommendations" class="textarea-large" required placeholder="Free text strategic advice for policymakers (supports **bold** formatting)..."></textarea>
+                        <div class="help-text">Provide nuanced advice on when/how to use this tool effectively</div>
+                    </div>
+                    
+                    <!-- Implementation -->
+                    <h2>Implementation</h2>
+                    <div class="form-group">
+                        <label for="potential_bodies">Potential Delivery Bodies</label>
+                        <input type="text" id="potential_bodies" placeholder="HMRC, BEIS, UKRI (comma-separated)">
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="administrative_complexity">Administrative Complexity</label>
+                            <textarea id="administrative_complexity" placeholder="High/Medium/Low + explanation..."></textarea>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="flexibility">Flexibility</label>
+                            <textarea id="flexibility" placeholder="High/Medium/Low + explanation..."></textarea>
+                        </div>
+                    </div>
+                    
+                    <!-- References -->
+                    <h2>References</h2>
+                    <div class="references-container">
+                        <div id="references-list">
+                            <!-- References will be added here dynamically -->
+                        </div>
+                        <button type="button" class="btn btn-secondary" onclick="addReference()">+ Add Reference</button>
+                    </div>
+                    
+                    <!-- Tags -->
+                    <h2>Tags for Cross-Navigation</h2>
+                    
+                    <div class="form-group">
+                        <label>Innovation Stage</label>
+                        <div class="tag-checkboxes" id="innovation_stage_tags">
+                            <div class="checkbox-item"><input type="checkbox" value="early_stage"> <span>Early Stage</span></div>
+                            <div class="checkbox-item"><input type="checkbox" value="applied_research"> <span>Applied Research</span></div>
+                            <div class="checkbox-item"><input type="checkbox" value="development"> <span>Development</span></div>
+                            <div class="checkbox-item"><input type="checkbox" value="demonstration"> <span>Demonstration</span></div>
+                            <div class="checkbox-item"><input type="checkbox" value="deployment"> <span>Deployment</span></div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Policy Objectives</label>
+                        <div class="tag-checkboxes" id="policy_objectives_tags">
+                            <div class="checkbox-item"><input type="checkbox" value="increase_rd_spending"> <span>Increase R&D Spending</span></div>
+                            <div class="checkbox-item"><input type="checkbox" value="support_smes"> <span>Support SMEs</span></div>
+                            <div class="checkbox-item"><input type="checkbox" value="regional_growth"> <span>Regional Growth</span></div>
+                            <div class="checkbox-item"><input type="checkbox" value="net_zero"> <span>Net Zero</span></div>
+                            <div class="checkbox-item"><input type="checkbox" value="economic_security"> <span>Economic Security</span></div>
+                            <div class="checkbox-item"><input type="checkbox" value="broad_innovation_stimulus"> <span>Broad Innovation Stimulus</span></div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Sectors</label>
+                        <div class="tag-checkboxes" id="sectors_tags">
+                            <div class="checkbox-item"><input type="checkbox" value="cross_sector"> <span>Cross-Sector</span></div>
+                            <div class="checkbox-item"><input type="checkbox" value="manufacturing"> <span>Manufacturing</span></div>
+                            <div class="checkbox-item"><input type="checkbox" value="ict"> <span>ICT</span></div>
+                            <div class="checkbox-item"><input type="checkbox" value="life_sciences"> <span>Life Sciences</span></div>
+                            <div class="checkbox-item"><input type="checkbox" value="aerospace"> <span>Aerospace</span></div>
+                            <div class="checkbox-item"><input type="checkbox" value="automotive"> <span>Automotive</span></div>
+                            <div class="checkbox-item"><input type="checkbox" value="energy"> <span>Energy</span></div>
+                            <div class="checkbox-item"><input type="checkbox" value="professional_services"> <span>Professional Services</span></div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Delivery Mechanism</label>
+                        <div class="tag-checkboxes" id="delivery_mechanism_tags">
+                            <div class="checkbox-item"><input type="checkbox" value="tax_incentive"> <span>Tax Incentive</span></div>
+                            <div class="checkbox-item"><input type="checkbox" value="grant"> <span>Grant</span></div>
+                            <div class="checkbox-item"><input type="checkbox" value="loan"> <span>Loan</span></div>
+                            <div class="checkbox-item"><input type="checkbox" value="guarantee"> <span>Guarantee</span></div>
+                            <div class="checkbox-item"><input type="checkbox" value="procurement"> <span>Procurement</span></div>
+                            <div class="checkbox-item"><input type="checkbox" value="regulation"> <span>Regulation</span></div>
+                            <div class="checkbox-item"><input type="checkbox" value="automatic_entitlement"> <span>Automatic Entitlement</span></div>
+                            <div class="checkbox-item"><input type="checkbox" value="competitive"> <span>Competitive</span></div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Targeting</label>
+                        <div class="tag-checkboxes" id="targeting_tags">
+                            <div class="checkbox-item"><input type="checkbox" value="broad_based"> <span>Broad-Based</span></div>
+                            <div class="checkbox-item"><input type="checkbox" value="sector_specific"> <span>Sector-Specific</span></div>
+                            <div class="checkbox-item"><input type="checkbox" value="technology_specific"> <span>Technology-Specific</span></div>
+                            <div class="checkbox-item"><input type="checkbox" value="regional"> <span>Regional</span></div>
+                            <div class="checkbox-item"><input type="checkbox" value="firm_size"> <span>Firm Size</span></div>
+                            <div class="checkbox-item"><input type="checkbox" value="business_focused"> <span>Business-Focused</span></div>
+                            <div class="checkbox-item"><input type="checkbox" value="academic_focused"> <span>Academic-Focused</span></div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Timeline</label>
+                        <div class="tag-checkboxes" id="timeline_tags">
+                            <div class="checkbox-item"><input type="checkbox" value="immediate_cash_flow"> <span>Immediate Cash Flow</span></div>
+                            <div class="checkbox-item"><input type="checkbox" value="short_term_outcomes"> <span>Short-Term Outcomes</span></div>
+                            <div class="checkbox-item"><input type="checkbox" value="long_term_innovation"> <span>Long-Term Innovation</span></div>
+                            <div class="checkbox-item"><input type="checkbox" value="fast_implementation"> <span>Fast Implementation</span></div>
+                            <div class="checkbox-item"><input type="checkbox" value="slow_implementation"> <span>Slow Implementation</span></div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            
+            <div id="empty-state" class="empty-state">
+                <h3>Welcome to R&D Policy Tools Manager</h3>
+                <p>Select a tool from the sidebar to edit, or create a new one to get started.</p>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Confirmation Modal -->
+    <div class="modal" id="confirm-modal">
+        <div class="modal-content">
+            <h3 id="modal-title">Confirm Action</h3>
+            <p id="modal-message">Are you sure?</p>
+            <div class="modal-buttons">
+                <button class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+                <button class="btn btn-danger" id="modal-confirm" onclick="confirmAction()">Confirm</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let tools = [];
+        let currentTool = null;
+        let currentToolIndex = -1;
+        let hasUnsavedChanges = false;
+        let originalFormState = '';
+        let referenceCount = 0;
+        let pendingAction = null;
+        
+        // Initialize the application
+        document.addEventListener('DOMContentLoaded', function() {
+            loadTools();
+            setupFormChangeTracking();
+            
+            // Handle beforeunload to warn about unsaved changes
+            window.addEventListener('beforeunload', function(e) {
+                if (hasUnsavedChanges) {
+                    e.preventDefault();
+                    e.returnValue = 'You have unsaved changes. Are you sure you want to leave?';
+                    return e.returnValue;
+                }
+            });
+        });
+        
+        async function loadTools() {
+            try {
+                const response = await fetch('tools.yaml');
+                if (response.ok) {
+                    const yamlContent = await response.text();
+                    tools = parseYAML(yamlContent);
+                } else {
+                    tools = [];
+                }
+                renderToolsList();
+            } catch (error) {
+                console.error('Error loading tools:', error);
+                tools = [];
+                renderToolsList();
+            }
+        }
+        
+        function parseYAML(yamlContent) {
+            // Simple YAML parser for our specific structure
+            const lines = yamlContent.split('\n');
+            const parsedTools = [];
+            let currentTool = null;
+            let currentSection = null;
+            let currentSubsection = null;
+            let indent = 0;
+            
+            for (let line of lines) {
+                const trimmed = line.trim();
+                if (!trimmed || trimmed.startsWith('#')) continue;
+                
+                const leadingSpaces = line.length - line.trimLeft().length;
+                
+                if (trimmed.startsWith('- name:')) {
+                    // New tool
+                    currentTool = { name: trimmed.replace('- name:', '').trim().replace(/"/g, '') };
+                    parsedTools.push(currentTool);
+                    currentSection = null;
+                    currentSubsection = null;
+                } else if (currentTool) {
+                    if (leadingSpaces === 4 && trimmed.includes(':')) {
+                        // Main field
+                        const [key, ...valueParts] = trimmed.split(':');
+                        const value = valueParts.join(':').trim().replace(/"/g, '');
+                        
+                        if (key === 'when_to_use' || key === 'targetability' || key === 'strengths_weaknesses' || 
+                            key === 'uk_context' || key === 'evidence' || key === 'delivery' || key === 'tags') {
+                            currentTool[key] = {};
+                            currentSection = key;
+                        } else if (key === 'further_reading') {
+                            currentTool[key] = [];
+                            currentSection = key;
+                        } else {
+                            currentTool[key] = value;
+                        }
+                    } else if (leadingSpaces === 6 && currentSection && trimmed.includes(':')) {
+                        // Subsection
+                        const [key, ...valueParts] = trimmed.split(':');
+                        const value = valueParts.join(':').trim().replace(/"/g, '');
+                        
+                        if (currentSection === 'tags' && value.startsWith('[')) {
+                            // Array value for tags
+                            const arrayValue = value.replace(/[\[\]]/g, '').split(',').map(s => s.trim().replace(/"/g, ''));
+                            currentTool[currentSection][key] = arrayValue;
+                        } else if (currentSection === 'when_to_use' && key === 'objectives' && value.startsWith('[')) {
+                            // Array value for objectives
+                            const arrayValue = value.replace(/[\[\]]/g, '').split(',').map(s => s.trim().replace(/"/g, ''));
+                            currentTool[currentSection][key] = arrayValue;
+                        } else if (currentSection === 'delivery' && key === 'potential_bodies' && value.startsWith('[')) {
+                            // Array value for potential_bodies
+                            const arrayValue = value.replace(/[\[\]]/g, '').split(',').map(s => s.trim().replace(/"/g, ''));
+                            currentTool[currentSection][key] = arrayValue;
+                        } else {
+                            currentTool[currentSection][key] = value;
+                        }
+                    } else if (leadingSpaces === 6 && currentSection === 'further_reading' && trimmed.startsWith('- ')) {
+                        // New reference
+                        currentTool[currentSection].push({});
+                        currentSubsection = currentTool[currentSection].length - 1;
+                    } else if (leadingSpaces === 8 && currentSection === 'further_reading' && currentSubsection !== null) {
+                        // Reference field
+                        const [key, ...valueParts] = trimmed.split(':');
+                        const value = valueParts.join(':').trim().replace(/"/g, '');
+                        currentTool[currentSection][currentSubsection][key] = value;
+                    }
+                }
+            }
+            
+            return parsedTools;
+        }
+        
+        function renderToolsList() {
+            const toolsList = document.getElementById('tools-list');
+            
+            if (tools.length === 0) {
+                toolsList.innerHTML = '<div class="empty-state"><p>No tools yet. Create your first tool!</p></div>';
+                return;
+            }
+            
+            toolsList.innerHTML = tools.map((tool, index) => `
+                <div class="tool-item ${currentToolIndex === index ? 'active' : ''}" onclick="selectTool(${index})">
+                    <div>
+                        <div class="tool-name">${tool.name || 'Untitled Tool'}</div>
+                        <div class="tool-status">${tool.aims ? tool.aims.substring(0, 50) + '...' : 'No description'}</div>
+                    </div>
+                    <button class="delete-btn" onclick="deleteTool(${index}, event)">Delete</button>
+                </div>
+            `).join('');
+        }
+        
+        function selectTool(index) {
+            if (hasUnsavedChanges) {
+                pendingAction = () => selectTool(index);
+                showModal('Unsaved Changes', 'You have unsaved changes. Do you want to discard them?', 'Discard');
+                return;
+            }
+            
+            currentToolIndex = index;
+            currentTool = tools[index];
+            loadToolIntoForm(currentTool);
+            renderToolsList();
+            updateUI();
+        }
+        
+        function createNewTool() {
+            if (hasUnsavedChanges) {
+                pendingAction = createNewTool;
+                showModal('Unsaved Changes', 'You have unsaved changes. Do you want to discard them?', 'Discard');
+                return;
+            }
+            
+            currentTool = { name: '' };
+            currentToolIndex = -1;
+            clearForm();
+            document.getElementById('form-container').style.display = 'block';
+            document.getElementById('empty-state').style.display = 'none';
+            updateUI();
+            setUnsavedChanges(true);
+        }
+        
+        function loadToolIntoForm(tool) {
+            clearForm();
+            
+            // Basic fields
+            document.getElementById('name').value = tool.name || '';
+            document.getElementById('how_it_works').value = tool.how_it_works || '';
+            document.getElementById('aims').value = tool.aims || '';
+            
+            // When to use it
+            if (tool.when_to_use) {
+                if (tool.when_to_use.objectives && Array.isArray(tool.when_to_use.objectives)) {
+                    tool.when_to_use.objectives.forEach(objective => {
+                        const checkbox = document.querySelector(`#objectives_checkboxes input[value="${objective}"]`);
+                        if (checkbox) checkbox.checked = true;
+                    });
+                }
+                document.getElementById('optimal_conditions').value = tool.when_to_use.optimal_conditions || '';
+                document.getElementById('implementation_tips').value = tool.when_to_use.implementation_tips || '';
+            }
+            
+            // Targetability
+            if (tool.targetability) {
+                document.getElementById('sectoral').value = tool.targetability.sectoral || '';
+                document.getElementById('technological').value = tool.targetability.technological || '';
+                document.getElementById('regional').value = tool.targetability.regional || '';
+                document.getElementById('by_firm_type').value = tool.targetability.by_firm_type || '';
+                document.getElementById('overall_assessment').value = tool.targetability.overall_assessment || '';
+            }
+            
+            // Strengths & Weaknesses
+            if (tool.strengths_weaknesses) {
+                document.getElementById('strengths').value = tool.strengths_weaknesses.strengths || '';
+                document.getElementById('weaknesses').value = tool.strengths_weaknesses.weaknesses || '';
+            }
+            
+            // UK Context
+            if (tool.uk_context) {
+                document.getElementById('current_use').value = tool.uk_context.current_use || '';
+                document.getElementById('uk_suitability').value = tool.uk_context.uk_suitability || '';
+            }
+            
+            // Evidence
+            if (tool.evidence) {
+                document.getElementById('quality').value = tool.evidence.quality || '';
+                document.getElementById('innovation_additionality').value = tool.evidence.innovation_additionality || '';
+                document.getElementById('time_to_impact').value = tool.evidence.time_to_impact || '';
+                document.getElementById('good_practice_example').value = tool.evidence.good_practice_example || '';
+                document.getElementById('bad_practice_example').value = tool.evidence.bad_practice_example || '';
+            }
+            
+            // Recommendations
+            document.getElementById('recommendations').value = tool.recommendations || '';
+            
+            // Implementation
+            if (tool.delivery) {
+                document.getElementById('potential_bodies').value = Array.isArray(tool.delivery.potential_bodies) ? 
+                    tool.delivery.potential_bodies.join(', ') : (tool.delivery.potential_bodies || '');
+                document.getElementById('administrative_complexity').value = tool.delivery.administrative_complexity || '';
+                document.getElementById('flexibility').value = tool.delivery.flexibility || '';
+            }
+            
+            // References
+            loadReferences(tool.further_reading || []);
+            
+            // Tags
+            loadTags(tool.tags || {});
+            
+            document.getElementById('form-container').style.display = 'block';
+            document.getElementById('empty-state').style.display = 'none';
+            
+            // Store original state for change detection
+            originalFormState = getFormState();
+            setUnsavedChanges(false);
+        }
+        
+        function clearForm() {
+            document.getElementById('toolForm').reset();
+            document.getElementById('references-list').innerHTML = '';
+            clearAllTags();
+            referenceCount = 0;
+            addReference(); // Add one default reference
+        }
+        
+        function loadReferences(references) {
+            document.getElementById('references-list').innerHTML = '';
+            referenceCount = 0;
+            
+            if (references.length === 0) {
+                addReference();
+            } else {
+                references.forEach(ref => {
+                    addReference();
+                    const lastRef = document.querySelector('.reference-item:last-child');
+                    lastRef.querySelector('.ref-title').value = ref.title || '';
+                    lastRef.querySelector('.ref-source').value = ref.source || '';
+                    lastRef.querySelector('.ref-url').value = ref.url || '';
+                    lastRef.querySelector('.ref-note').value = ref.note || '';
+                });
+            }
+        }
+        
+        function loadTags(tags) {
+            clearAllTags();
+            
+            Object.entries(tags).forEach(([category, values]) => {
+                if (Array.isArray(values)) {
+                    values.forEach(value => {
+                        const checkbox = document.querySelector(`#${category}_tags input[value="${value}"]`);
+                        if (checkbox) checkbox.checked = true;
+                    });
+                }
+            });
+        }
+        
+        function clearAllTags() {
+            document.querySelectorAll('.tag-checkboxes input[type="checkbox"]').forEach(cb => cb.checked = false);
+            document.querySelectorAll('#objectives_checkboxes input[type="checkbox"]').forEach(cb => cb.checked = false);
+        }
+        
+        function addReference() {
+            referenceCount++;
+            const referencesList = document.getElementById('references-list');
+            
+            const referenceDiv = document.createElement('div');
+            referenceDiv.className = 'reference-item';
+            referenceDiv.innerHTML = `
+                <div style="display: flex; justify-content: between; align-items: center; margin-bottom: 10px;">
+                    <strong>Reference ${referenceCount}</strong>
+                    <button type="button" class="btn btn-danger" onclick="removeReference(this)" style="margin-left: auto; padding: 5px 10px; font-size: 12px;">Remove</button>
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px;">
+                    <div>
+                        <label>Title</label>
+                        <input type="text" class="ref-title" placeholder="Paper/report title">
+                    </div>
+                    <div>
+                        <label>Source</label>
+                        <input type="text" class="ref-source" placeholder="Author/organization">
+                    </div>
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                    <div>
+                        <label>URL (optional)</label>
+                        <input type="text" class="ref-url" placeholder="https://...">
+                    </div>
+                    <div>
+                        <label>Note (optional)</label>
+                        <input type="text" class="ref-note" placeholder="Brief description">
+                    </div>
+                </div>
+            `;
+            
+            referencesList.appendChild(referenceDiv);
+            setupFormChangeTracking(); // Re-setup tracking for new elements
+        }
+        
+        function removeReference(button) {
+            button.closest('.reference-item').remove();
+            setUnsavedChanges(true);
+        }
+        
+        function setupFormChangeTracking() {
+            const form = document.getElementById('toolForm');
+            if (!form) return;
+            
+            const inputs = form.querySelectorAll('input, textarea, select');
+            inputs.forEach(input => {
+                input.removeEventListener('input', trackChanges);
+                input.removeEventListener('change', trackChanges);
+                input.addEventListener('input', trackChanges);
+                input.addEventListener('change', trackChanges);
+            });
+            
+            // Also track objectives checkboxes
+            const objectivesCheckboxes = document.querySelectorAll('#objectives_checkboxes input[type="checkbox"]');
+            objectivesCheckboxes.forEach(checkbox => {
+                checkbox.removeEventListener('change', trackChanges);
+                checkbox.addEventListener('change', trackChanges);
+            });
+        }
+        
+        function trackChanges() {
+            const currentState = getFormState();
+            setUnsavedChanges(currentState !== originalFormState);
+        }
+        
+        function getFormState() {
+            const formData = new FormData(document.getElementById('toolForm'));
+            const references = Array.from(document.querySelectorAll('.reference-item')).map(item => ({
+                title: item.querySelector('.ref-title').value,
+                source: item.querySelector('.ref-source').value,
+                url: item.querySelector('.ref-url').value,
+                note: item.querySelector('.ref-note').value
+            }));
+            
+            const tags = {};
+            ['innovation_stage', 'policy_objectives', 'sectors', 'delivery_mechanism', 'targeting', 'timeline'].forEach(category => {
+                tags[category] = getSelectedTags(category + '_tags');
+            });
+            
+            const objectives = getSelectedObjectives();
+            
+            return JSON.stringify({
+                form: Object.fromEntries(formData),
+                references,
+                tags,
+                objectives
+            });
+        }
+        
+        function setUnsavedChanges(hasChanges) {
+            hasUnsavedChanges = hasChanges;
+            updateUI();
+            
+            if (currentToolIndex >= 0) {
+                const toolItem = document.querySelector(`.tool-item:nth-child(${currentToolIndex + 1})`);
+                if (toolItem) {
+                    if (hasChanges) {
+                        toolItem.classList.add('modified');
+                    } else {
+                        toolItem.classList.remove('modified');
+                    }
+                }
+            }
+        }
+        
+        function updateUI() {
+            const toolName = document.getElementById('name').value || (currentTool ? currentTool.name : 'New Tool');
+            document.getElementById('current-tool-name').textContent = toolName;
+            
+            const statusIndicator = document.getElementById('status-indicator');
+            const saveBtn = document.getElementById('save-btn');
+            const cancelBtn = document.getElementById('cancel-btn');
+            
+            if (currentTool !== null || currentToolIndex >= 0) {
+                statusIndicator.style.display = 'block';
+                saveBtn.style.display = 'inline-block';
+                cancelBtn.style.display = 'inline-block';
+                
+                if (hasUnsavedChanges) {
+                    statusIndicator.textContent = currentToolIndex >= 0 ? 'Modified' : 'New';
+                    statusIndicator.className = 'status-indicator ' + (currentToolIndex >= 0 ? 'status-modified' : 'status-new');
+                } else {
+                    statusIndicator.textContent = 'Saved';
+                    statusIndicator.className = 'status-indicator status-saved';
+                }
+            } else {
+                statusIndicator.style.display = 'none';
+                saveBtn.style.display = 'none';
+                cancelBtn.style.display = 'none';
+            }
+        }
+        
+        async function saveTool() {
+            try {
+                const toolData = collectFormData();
+                
+                if (currentToolIndex >= 0) {
+                    // Update existing tool
+                    tools[currentToolIndex] = toolData;
+                } else {
+                    // Add new tool
+                    tools.push(toolData);
+                    currentToolIndex = tools.length - 1;
+                }
+                
+                currentTool = toolData;
+                
+                await saveToFile();
+                originalFormState = getFormState();
+                setUnsavedChanges(false);
+                renderToolsList();
+                showMessage('Tool saved successfully!', 'success');
+            } catch (error) {
+                showMessage('Error saving tool: ' + error.message, 'error');
+            }
+        }
+        
+        async function saveToFile() {
+            try {
+                const yamlContent = generateYAMLFromTools(tools);
+                const response = await fetch('tools.yaml', {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'text/yaml',
+                    },
+                    body: yamlContent
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`Failed to save file: ${response.status}`);
+                }
+            } catch (error) {
+                console.error('Error saving file:', error);
+                throw new Error('Failed to save to tools.yaml');
+            }
+        }
+        
+        function collectFormData() {
+            const data = {
+                name: document.getElementById('name').value
+            };
+            
+            // Basic fields
+            const basicFields = ['how_it_works', 'aims', 'recommendations'];
+            basicFields.forEach(field => {
+                const value = document.getElementById(field).value;
+                if (value) data[field] = value;
+            });
+            
+            // When to use it
+            const whenToUse = {};
+            const objectives = getSelectedObjectives();
+            if (objectives.length > 0) whenToUse.objectives = objectives;
+            
+            ['optimal_conditions', 'implementation_tips'].forEach(field => {
+                const value = document.getElementById(field).value;
+                if (value) whenToUse[field] = value;
+            });
+            if (Object.keys(whenToUse).length > 0) data.when_to_use = whenToUse;
+            
+            // Targetability
+            const targetability = {};
+            ['sectoral', 'technological', 'regional', 'by_firm_type', 'overall_assessment'].forEach(field => {
+                const value = document.getElementById(field).value;
+                if (value) targetability[field] = value;
+            });
+            if (Object.keys(targetability).length > 0) data.targetability = targetability;
+            
+            // Strengths & Weaknesses
+            const strengthsWeaknesses = {};
+            ['strengths', 'weaknesses'].forEach(field => {
+                const value = document.getElementById(field).value;
+                if (value) strengthsWeaknesses[field] = value;
+            });
+            if (Object.keys(strengthsWeaknesses).length > 0) data.strengths_weaknesses = strengthsWeaknesses;
+            
+            // UK Context
+            const ukContext = {};
+            ['current_use', 'uk_suitability'].forEach(field => {
+                const value = document.getElementById(field).value;
+                if (value) ukContext[field] = value;
+            });
+            if (Object.keys(ukContext).length > 0) data.uk_context = ukContext;
+            
+            // Evidence
+            const evidence = {};
+            ['quality', 'innovation_additionality', 'time_to_impact', 'good_practice_example', 'bad_practice_example'].forEach(field => {
+                const value = document.getElementById(field).value;
+                if (value) evidence[field] = value;
+            });
+            if (Object.keys(evidence).length > 0) data.evidence = evidence;
+            
+            // Implementation
+            const delivery = {};
+            const potentialBodies = document.getElementById('potential_bodies').value;
+            if (potentialBodies) {
+                delivery.potential_bodies = potentialBodies.split(',').map(b => b.trim());
+            }
+            ['administrative_complexity', 'flexibility'].forEach(field => {
+                const value = document.getElementById(field).value;
+                if (value) delivery[field] = value;
+            });
+            if (Object.keys(delivery).length > 0) data.delivery = delivery;
+            
+            // References
+            const references = [];
+            document.querySelectorAll('.reference-item').forEach(item => {
+                const title = item.querySelector('.ref-title').value;
+                const source = item.querySelector('.ref-source').value;
+                const url = item.querySelector('.ref-url').value;
+                const note = item.querySelector('.ref-note').value;
+                
+                if (title && source) {
+                    const ref = { title, source };
+                    if (url) ref.url = url;
+                    if (note) ref.note = note;
+                    references.push(ref);
+                }
+            });
+            if (references.length > 0) data.further_reading = references;
+            
+            // Tags
+            const tags = {};
+            ['innovation_stage', 'policy_objectives', 'sectors', 'delivery_mechanism', 'targeting', 'timeline'].forEach(category => {
+                const selected = getSelectedTags(category + '_tags');
+                if (selected.length > 0) tags[category] = selected;
+            });
+            if (Object.keys(tags).length > 0) data.tags = tags;
+            
+            return data;
+        }
+        
+        function getSelectedTags(containerId) {
+            const container = document.getElementById(containerId);
+            const checkboxes = container.querySelectorAll('input[type="checkbox"]:checked');
+            return Array.from(checkboxes).map(cb => cb.value);
+        }
+        
+        function getSelectedObjectives() {
+            const container = document.getElementById('objectives_checkboxes');
+            const checkboxes = container.querySelectorAll('input[type="checkbox"]:checked');
+            return Array.from(checkboxes).map(cb => cb.value);
+        }
+        
+        function generateYAMLFromTools(toolsArray) {
+            let yaml = 'tools:\n';
+            
+            toolsArray.forEach(tool => {
+                yaml += `  - name: "${tool.name}"\n\n`;
+                
+                // HOW IT WORKS
+                if (tool.how_it_works) {
+                    yaml += `    # HOW IT WORKS\n`;
+                    yaml += `    how_it_works: "${tool.how_it_works}"\n\n`;
+                }
+                
+                // AIMS
+                if (tool.aims) {
+                    yaml += `    # AIMS\n`;
+                    yaml += `    aims: "${tool.aims}"\n\n`;
+                }
+                
+                // WHEN TO USE IT
+                if (tool.when_to_use) {
+                    yaml += `    # WHEN TO USE IT\n`;
+                    yaml += `    when_to_use:\n`;
+                    if (tool.when_to_use.objectives && tool.when_to_use.objectives.length > 0) {
+                        const formattedObjectives = tool.when_to_use.objectives.map(obj => `"${obj}"`).join(', ');
+                        yaml += `      objectives: [${formattedObjectives}]\n`;
+                    }
+                    if (tool.when_to_use.optimal_conditions) yaml += `      optimal_conditions: "${tool.when_to_use.optimal_conditions}"\n`;
+                    if (tool.when_to_use.implementation_tips) yaml += `      implementation_tips: "${tool.when_to_use.implementation_tips}"\n`;
+                    yaml += `\n`;
+                }
+                
+                // TARGETABILITY
+                if (tool.targetability) {
+                    yaml += `    # TARGETABILITY\n`;
+                    yaml += `    targetability:\n`;
+                    Object.entries(tool.targetability).forEach(([key, value]) => {
+                        yaml += `      ${key}: "${value}"\n`;
+                    });
+                    yaml += `\n`;
+                }
+                
+                // STRENGTHS & WEAKNESSES
+                if (tool.strengths_weaknesses) {
+                    yaml += `    # STRENGTHS & WEAKNESSES\n`;
+                    yaml += `    strengths_weaknesses:\n`;
+                    Object.entries(tool.strengths_weaknesses).forEach(([key, value]) => {
+                        yaml += `      ${key}: "${value}"\n`;
+                    });
+                    yaml += `\n`;
+                }
+                
+                // UK CONTEXT
+                if (tool.uk_context) {
+                    yaml += `    # UK CONTEXT\n`;
+                    yaml += `    uk_context:\n`;
+                    Object.entries(tool.uk_context).forEach(([key, value]) => {
+                        yaml += `      ${key}: "${value}"\n`;
+                    });
+                    yaml += `\n`;
+                }
+                
+                // EVIDENCE
+                if (tool.evidence) {
+                    yaml += `    # EVIDENCE\n`;
+                    yaml += `    evidence:\n`;
+                    Object.entries(tool.evidence).forEach(([key, value]) => {
+                        yaml += `      ${key}: "${value}"\n`;
+                    });
+                    yaml += `\n`;
+                }
+                
+                // RECOMMENDATIONS
+                if (tool.recommendations) {
+                    yaml += `    # RECOMMENDATIONS\n`;
+                    yaml += `    recommendations: "${tool.recommendations}"\n\n`;
+                }
+                
+                // IMPLEMENTATION
+                if (tool.delivery) {
+                    yaml += `    # IMPLEMENTATION\n`;
+                    yaml += `    delivery:\n`;
+                    Object.entries(tool.delivery).forEach(([key, value]) => {
+                        if (Array.isArray(value)) {
+                            const formattedValue = value.map(v => `"${v}"`).join(', ');
+                            yaml += `      ${key}: [${formattedValue}]\n`;
+                        } else {
+                            yaml += `      ${key}: "${value}"\n`;
+                        }
+                    });
+                    yaml += `\n`;
+                }
+                
+                // REFERENCES
+                if (tool.further_reading && tool.further_reading.length > 0) {
+                    yaml += `    # REFERENCE\n`;
+                    yaml += `    further_reading:\n`;
+                    tool.further_reading.forEach(ref => {
+                        yaml += `      - title: "${ref.title}"\n`;
+                        yaml += `        source: "${ref.source}"\n`;
+                        if (ref.url) yaml += `        url: "${ref.url}"\n`;
+                        if (ref.note) yaml += `        note: "${ref.note}"\n`;
+                    });
+                    yaml += `\n`;
+                }
+                
+                // TAGS
+                if (tool.tags && Object.keys(tool.tags).length > 0) {
+                    yaml += `    # TAGS FOR CROSS-NAVIGATION\n`;
+                    yaml += `    tags:\n`;
+                    Object.entries(tool.tags).forEach(([key, values]) => {
+                        if (values.length > 0) {
+                            const formattedValues = values.map(v => `"${v}"`).join(', ');
+                            yaml += `      ${key}: [${formattedValues}]\n`;
+                        }
+                    });
+                    yaml += `\n`;
+                }
+            });
+            
+            return yaml;
+        }
+        
+        function cancelChanges() {
+            if (hasUnsavedChanges) {
+                showModal('Discard Changes', 'Are you sure you want to discard your changes?', 'Discard', () => {
+                    if (currentToolIndex >= 0) {
+                        loadToolIntoForm(tools[currentToolIndex]);
+                    } else {
+                        // New tool, go back to empty state
+                        currentTool = null;
+                        currentToolIndex = -1;
+                        document.getElementById('form-container').style.display = 'none';
+                        document.getElementById('empty-state').style.display = 'block';
+                        renderToolsList();
+                        updateUI();
+                    }
+                });
+            }
+        }
+        
+        function deleteTool(index, event) {
+            event.stopPropagation();
+            const tool = tools[index];
+            showModal('Delete Tool', `Are you sure you want to delete "${tool.name}"?`, 'Delete', async () => {
+                tools.splice(index, 1);
+                
+                if (currentToolIndex === index) {
+                    // Currently editing this tool
+                    currentTool = null;
+                    currentToolIndex = -1;
+                    document.getElementById('form-container').style.display = 'none';
+                    document.getElementById('empty-state').style.display = 'block';
+                } else if (currentToolIndex > index) {
+                    // Adjust current index
+                    currentToolIndex--;
+                }
+                
+                try {
+                    await saveToFile();
+                    renderToolsList();
+                    updateUI();
+                    showMessage('Tool deleted successfully', 'success');
+                } catch (error) {
+                    showMessage('Error deleting tool: ' + error.message, 'error');
+                }
+            });
+        }
+        
+        function showModal(title, message, confirmText, confirmCallback) {
+            document.getElementById('modal-title').textContent = title;
+            document.getElementById('modal-message').textContent = message;
+            document.getElementById('modal-confirm').textContent = confirmText;
+            
+            if (confirmCallback) {
+                pendingAction = confirmCallback;
+            }
+            
+            document.getElementById('confirm-modal').classList.add('show');
+        }
+        
+        function closeModal() {
+            document.getElementById('confirm-modal').classList.remove('show');
+            pendingAction = null;
+        }
+        
+        function confirmAction() {
+            if (pendingAction) {
+                pendingAction();
+                pendingAction = null;
+            }
+            closeModal();
+        }
+        
+        function showMessage(text, type) {
+            const messagesContainer = document.getElementById('messages');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = type === 'error' ? 'error-message' : 'success-message';
+            messageDiv.textContent = text;
+            
+            messagesContainer.appendChild(messageDiv);
+            
+            setTimeout(() => {
+                messageDiv.remove();
+            }, 5000);
+        }
+    </script>
+</body>
+</html>
